@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:body>
+        <div id="pin">
+            <div class="lefts centers bolds whites padded"><br />
+                Welcome,<h:outputLabel value="#{logInBean.username}"/><br /><br />
+                <h:form>
+                    <h:commandLink value=" &#187; Go Back" styleClass="whites bolds nonunderlined" action="#{loginBean.goBack()}"/>
+                </h:form>
+            </div>
+            <h:form>
+                <div class="lefts centers bolds whites borderless" style="vertical-align: top;">
+                    <h:panelGrid>
+                        <h:column>
+                            <h:outputLabel value="Enter your PIN:"/>
+                        </h:column>
+                        <h:column>
+                            <h:inputText class="texts padded elevens" size="30" value="#{loginBean.password}"/>
+                        </h:column>                    
+                        <h:column>
+                            <h:commandButton value="Send PIN" class="bolds buttons padded elevens" action="#{loginBean.validatePin()}"/>
+                        </h:column>                                            
+                        <h:column>
+                            <div style="border: 1px solid #ccc;" class="elevens bolds padded">
+                                You will receive a four-digit pin in the next few minutes. The PIN will expire in 60 seconds.
+                            </div>
+                            <h:outputLabel value="#{logInBean.errorString}" styleClass="errortexts elevens bolds"/>
+                        </h:column>                        
+                    </h:panelGrid>
+                </div>                
+            </h:form>
+        </div>                        
+    </h:body>
+</html>
+

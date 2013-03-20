@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <div id="canvas">
+            <div style="text-align: right;padding: 5px;" class="elevens">
+                <div class="centers" style="width : 75%;">
+                    <h:outputLabel value="#{loginBean.admin.schoolName}" styleClass="bolds fifteens" style="text-transform:uppercase"/>
+                </div>
+                <h:form>
+                    <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{loginBean.logOut()}" ajax="false"/>
+                </h:form>
+            </div>            
+            <p:tabView styleClass="elevens bolds">
+                <p:tab title="Registered Students">
+                    <p:dataTable paginator="true" rows="100"  
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                 {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" styleClass="elevens datatables" 
+                                 value="#{schoolBean.students}" var="student" lazy="true">
+                        <f:facet name="header">Registered Students</f:facet>
+                        <p:column headerText="ID No.">
+                            <h:outputLabel value="#{student.identNo}"/>
+                        </p:column>                    
+                        <p:column headerText="Name of Student" filterBy="#{student.name}">
+                            <h:outputLabel value="#{student.name}"/>
+                        </p:column>
+                        <p:column headerText="Last Update" sortBy="#{student.lastUpdate}">
+                            <h:outputLabel value="#{student.lastUpdate}"/>
+                        </p:column>                    
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Transaction History">
+                    <p:dataTable paginator="true" rows="20"  
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history">
+                        <f:facet name="header">Transaction History</f:facet>
+                        <p:column headerText="Name of Student">
+                            <h:outputLabel value="#{history.studentName}"/>
+                        </p:column>
+                        <p:column headerText="Amount Paid">
+                            <h:outputLabel value="#{history.amountPaid}"/>
+                        </p:column>                        
+                        <p:column headerText="Paid By">
+                            <h:outputLabel value="#{history.paidBy}"/>
+                        </p:column>                        
+                        <p:column headerText="Payment Reference">
+                            <h:outputLabel value="#{history.paymentRef}"/>
+                        </p:column>                        
+                        <p:column headerText="Transaction ID">
+                            <h:outputLabel value="#{history.transactionID}"/>
+                        </p:column>                        
+                        <p:column headerText="Date">
+                            <h:outputLabel value="#{history.date}"/>
+                        </p:column>                        
+                    </p:dataTable>                    
+                </p:tab>            
+            </p:tabView>            
+        </div>
+    </h:body>
+</html>
+
