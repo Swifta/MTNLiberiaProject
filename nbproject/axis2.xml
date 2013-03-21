@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<axis2 xmlns="http://www.netbeans.org/ns/axis2/1">
+    <service name="FundamoPayment">
+        <service-class>com.afrinnova.api.schoolfees.rpc.ws.FundamoPayment</service-class>
+    </service>
+    <service name="ThirdPartyAccountQuery">
+        <service-class>com.afrinnova.api.schoolfees.rpc.ws.ThirdPartyAccountQuery</service-class>
+    </service>
+    <libraries>
+        <library-ref name="log4j-1.2.8.jar"/>
+    </libraries>
+</axis2>
