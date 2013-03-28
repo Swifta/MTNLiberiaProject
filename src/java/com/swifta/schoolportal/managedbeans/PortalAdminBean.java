@@ -4,10 +4,10 @@
  */
 package com.swifta.schoolportal.managedbeans;
 
+import com.swifta.schoolportal.dblogic.PartnerServiceDatabase;
+import com.swifta.schoolportal.dblogic.PaymentModeDatabase;
 import com.swifta.schoolportal.dblogic.PortalAdminDatabase;
-import com.swifta.schoolportal.entities.PortalAdmin;
-import com.swifta.schoolportal.entities.School;
-import com.swifta.schoolportal.entities.SchoolAdmin;
+import com.swifta.schoolportal.entities.*;
 import com.swifta.schoolportal.utils.PageUrls;
 import com.swifta.schoolportal.utils.UserAuthentication;
 import java.io.IOException;
@@ -36,21 +36,23 @@ public class PortalAdminBean {
     private List<School> schools;
     private PortalAdminDatabase adminDatabase = new PortalAdminDatabase();
     private List<SchoolAdmin> admins;
-    
+    private List<PartnerService> partnerServices;
+    private List<PaymentMode> paymentModes;
+
     public PortalAdminBean() {
         portalAdmin = new PortalAdmin();
         portalSession = new PortalSession();
         message = "";
     }
-    
+
     public PortalAdmin getPortalAdmin() {
         return portalAdmin;
     }
-    
+
     public void setPortalAdmin(PortalAdmin portalAdmin) {
         this.portalAdmin = portalAdmin;
     }
-    
+
     public List<SchoolAdmin> getAdmins() {
         try {
             return adminDatabase.getAllAdmins();
@@ -60,11 +62,38 @@ public class PortalAdminBean {
             return admins;
         }
     }
-    
+
     public void setAdmins(List<SchoolAdmin> admins) {
         this.admins = admins;
     }
-    
+
+    public void setPartnerServices(List<PartnerService> partnerServices) {
+        this.partnerServices = partnerServices;
+    }
+
+    public List<PartnerService> getPartnerServices() {
+        try {
+           return new PartnerServiceDatabase().getAllPartnerServices();
+        } catch (SQLException ex) {
+         logger.error(ex);
+           ex.printStackTrace();
+        return new ArrayList<PartnerService>();
+         }
+    }
+
+    public void setPaymentModes(List<PaymentMode> paymentModes) {
+        this.paymentModes = paymentModes;
+    }
+
+    public List<PaymentMode> getPaymentModes() {
+        
+         try { return new PaymentModeDatabase().getAllPaymentModes(); } catch
+         (SQLException ex) { logger.error(ex); ex.printStackTrace();
+        
+        return new ArrayList<PaymentMode>();
+        }
+    }
+
     public List<School> getSchools() {
         try {
             return adminDatabase.getAllSchools();
@@ -73,11 +102,11 @@ public class PortalAdminBean {
             return new ArrayList<School>();
         }
     }
-    
+
     public void setSchools(List<School> schools) {
         this.schools = schools;
     }
-    
+
     public void authenticate() {
         try {
             UserAuthentication auth = new UserAuthentication();
@@ -97,15 +126,15 @@ public class PortalAdminBean {
             ex.printStackTrace();
         }
     }
-    
+
     public String getMessage() {
         return message;
     }
-    
+
     public void setMessage(String message) {
         this.message = message;
     }
-    
+
     public void logOut() {
         try {
             portalSession.redirect(0);

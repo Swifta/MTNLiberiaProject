@@ -2,59 +2,118 @@
       xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
         <p:growl rendered="true"/>
+
         <div id="canvas">
-            <p:dialog header="New School Admin" widgetVar="admin" styleClass="elevens bolds" width="450" height="250" resizable="false" modal="true">
-                <h:form>
-                    <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
-                        <h:outputLabel value="Pick a school"/>
-                        <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
-                            <f:selectItem itemLabel="Select a school"/>
-                            <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
-                        </h:selectOneMenu>
-                        <h:outputLabel value="First Name : "/>
-                        <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required"/>
-                        <h:outputLabel value="Last Name : "/>
-                        <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required"/>
-                        <h:outputLabel value="Mobile : "/>
-                        <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required"/>
-                        <h:outputLabel value="Email Address : "/>
-                        <h:inputText value="#{schoolBean.admin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required"/>
-                        <h:outputLabel value=""/>
-                        <h:commandButton value="Create Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createAdmin()}"/> 
-                    </h:panelGrid>                    
-                </h:form>
-            </p:dialog>
-            <div style="text-align: right;padding: 5px;" class="elevens">
-                <h:form>
-                    <p:commandButton value="Create School Admin" styleClass="elevens bolds" onclick="admin.show();"/>
-                    <p:spacer width="20"/>
-                    <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
-                </h:form>
-            </div>
-                <br />
-                <p:dataTable paginator="true" rows="20"  
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                             rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.admins}" var="admin">
-                    <f:facet name="header">List of School Administrators</f:facet>
-                    <p:column headerText="First Name" sortBy="#{admin.firstName}">
-                        <h:outputLabel value="#{admin.firstName}"/>
-                    </p:column>
-                    <p:column headerText="Last Name" sortBy="#{admin.lastName}">
-                        <h:outputLabel value="#{admin.lastName}"/>
-                    </p:column>
-                    <p:column headerText="Username" sortBy="#{admin.username}">
-                        <h:outputLabel value="#{admin.username}"/>
-                    </p:column>                    
-                    <p:column headerText="Email Address" sortBy="#{admin.emailAddress}">
-                        <h:outputLabel value="#{admin.emailAddress}"/>
-                    </p:column>
-                    <p:column headerText="Mobile" sortBy="#{admin.phoneNo}">
-                        <h:outputLabel value="#{admin.phoneNo}"/>
-                    </p:column>                    
-                    <p:column headerText="Name of School" sortBy="#{admin.schoolName}">
-                        <h:outputLabel value="#{admin.schoolName}"/>
-                    </p:column>                    
-                </p:dataTable>
+            <p:tabView styleClass="elevens bolds" dynamic="true" activeIndex="#{schoolBean.activeIndex}">
+                <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}" update=":form:growl"/>   <p:tab title="Manage Schools" id="manageschool">
+                    <p:dialog header="Add New School" widgetVar="school" styleClass="elevens bolds" width="450" resizable="false" modal="true">
+                        <h:form>
+                            <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
+
+                                <h:outputLabel value="School Name : "/>
+                                <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required"/>
+                                <!--  <h:outputLabel value="Pick a payment mode"/>
+                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.paymentModeId}">
+                                      <f:selectItem itemLabel="Select a payment mode"/>
+                                      <f:selectItems value="#{portalAdminBean.paymentModes}" var="paymentMode" itemLabel="#{paymentMode.type}" itemValue="#{paymentMode.id}"/> 
+                                  </h:selectOneMenu>
+                                  <h:outputLabel value="Pick a partner type"/>
+                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.partnerServiceId}">
+                                      <f:selectItem itemLabel="Select a partner service"/>
+                                      <f:selectItems value="#{portalAdminBean.partnerServices}" var="partnerService" itemLabel="#{partnerService.name}" itemValue="#{partnerService.id}"/> 
+                                  </h:selectOneMenu> -->
+                                <h:outputLabel value=""/>
+                                <h:commandButton value="Create School" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createSchool()}"/> 
+                            </h:panelGrid>                    
+                        </h:form>
+                    </p:dialog>
+                    <div style="text-align: right;padding: 5px;" class="elevens">
+                        <h:form>
+                            <p:commandButton value="Add School" styleClass="elevens bolds" onclick="school.show();"/>
+                            <p:spacer width="20"/>
+                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                        </h:form>
+                    </div>
+                    <br />
+                    <h:form> <p:dataTable paginator="true" rows="20"  
+                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                          rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.schools}" var="schools">
+                            <f:facet name="header">List of Schools</f:facet>
+                            <p:column headerText="School Name" sortBy="#{schools.name}" style="width:95%">
+                                <h:outputLabel value="#{schools.name}"/>
+                            </p:column>
+                         <!--   <p:column headerText="Payment Mode Name" sortBy="#{schools.paymentModeType}">
+                                <h:outputLabel value="#{schools.paymentModeType}"/>
+                            </p:column>
+                            <p:column headerText="Partner Service" sortBy="#{schools.partnerServiceName}">
+                                <h:outputLabel value="#{schools.partnerServiceName}"/>
+                            </p:column>  --><p:column style="width:5%" >  
+                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchool(schools.id)}"> 
+                                </p:commandLink>  
+                            </p:column>                   
+                        </p:dataTable></h:form></p:tab>
+                <p:tab title="Manage School Admin" id="manageadmin">
+                    <p:dialog header="New School Admin" widgetVar="admin" styleClass="elevens bolds" width="450" height="250" resizable="false" modal="true">
+                        <h:form>
+                            <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
+                                <h:outputLabel value="Pick a school"/>
+                                <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
+                                    <f:selectItem itemLabel="Select a school"/>
+                                    <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
+                                </h:selectOneMenu>
+                                <h:outputLabel value="First Name : "/>
+                                <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required"/>
+                                <h:outputLabel value="Last Name : "/>
+                                <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required"/>
+                                <h:outputLabel value="Mobile : "/>
+                                <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required"/>
+                                <h:outputLabel value="Email Address : "/>
+                                <h:inputText value="#{schoolBean.admin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required"/>
+                                <h:outputLabel value=""/>
+                                <h:commandButton value="Create Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createAdmin()}"/> 
+                            </h:panelGrid>                    
+                        </h:form>
+                    </p:dialog>
+                    <div style="text-align: right;padding: 5px;" class="elevens">
+                        <h:form>
+                            <p:commandButton value="Create School Admin" styleClass="elevens bolds" onclick="admin.show();"/>
+                            <p:spacer width="20"/>
+                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                        </h:form>
+                    </div>
+                    <br />
+                    <h:form>
+                        <p:dataTable paginator="true" rows="20"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.admins}" var="admin">
+                            <f:facet name="header">List of School Administrators</f:facet>
+                            <p:column headerText="First Name" sortBy="#{admin.firstName}">
+                                <h:outputLabel value="#{admin.firstName}"/>
+                            </p:column>
+                            <p:column headerText="Last Name" sortBy="#{admin.lastName}">
+                                <h:outputLabel value="#{admin.lastName}"/>
+                            </p:column>
+                            <p:column headerText="Username" sortBy="#{admin.username}">
+                                <h:outputLabel value="#{admin.username}"/>
+                            </p:column>                    
+                            <p:column headerText="Email Address" sortBy="#{admin.emailAddress}">
+                                <h:outputLabel value="#{admin.emailAddress}"/>
+                            </p:column>
+                            <p:column headerText="Mobile" sortBy="#{admin.phoneNo}">
+                                <h:outputLabel value="#{admin.phoneNo}"/>
+                            </p:column>                    
+                            <p:column headerText="Name of School" sortBy="#{admin.schoolName}">
+                                <h:outputLabel value="#{admin.schoolName}"/>
+                            </p:column>  
+                            <p:column style="width:5%" >  
+                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchoolAdmin(admin.id)}"> 
+                                </p:commandLink>  
+                            </p:column>         
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+            </p:tabView>
         </div>
     </h:body>
 </html>

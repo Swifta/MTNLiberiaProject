@@ -6,22 +6,13 @@ package com.swifta.schoolportal.entities;
 
 /**
  *
- * @author Opeyemi
+ * @author princeyekaso
  */
-public class Student {
+public class StudentObject {
 
-    private String name = "";
-    private String identNo = "";
-    private String lastUpdate = "";
-    private int id;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private String name;
+    private String identNo;
+    private String lastUpdate;
 
     public String getIdentNo() {
         return identNo;
@@ -45,11 +36,5 @@ public class Student {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return this.name + " " + this.identNo + " " + this.lastUpdate;
-
     }
 }

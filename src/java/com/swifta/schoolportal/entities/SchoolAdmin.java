@@ -11,7 +11,15 @@ package com.swifta.schoolportal.entities;
 public class SchoolAdmin {
  
     private String firstName,lastName,phoneNo,emailAddress,schoolName,username;
-    private int schoolID;
+    private int schoolID,id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getSchoolName() {
         return schoolName;

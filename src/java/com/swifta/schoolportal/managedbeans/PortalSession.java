@@ -23,32 +23,32 @@ public class PortalSession {
     /**
      * Creates a new instance of PortalSession
      */
-    
     private HttpSession appSession;
-    private Logger logger = Logger.getLogger(PortalSession.class);    
-    
+    private Logger logger = Logger.getLogger(PortalSession.class);
+
     public PortalSession() {
         FacesContext fc = FacesContext.getCurrentInstance();
         appSession = (HttpSession) fc.getExternalContext().getSession(true);
-        appSession.setAttribute("pageid", 0);
-        appSession.setMaxInactiveInterval(AppValues.timeOut);                
+        if (appSession.getAttribute("pageid") == null) {
+            appSession.setAttribute("pageid", 0);
+        }
+        //appSession.setMaxInactiveInterval(AppValues.timeOut);                
         PortalInitBean.initApp();
     }
-    
+
     public HttpSession getAppSession() {
         return appSession;
     }
 
     public void setAppSession(HttpSession appSession) {
         this.appSession = appSession;
-    }    
-    
-    public void redirect(int id) throws IOException{
+    }
+
+    public void redirect(int id) throws IOException {
         //redirects the page
         FacesContext fc = FacesContext.getCurrentInstance();
-        this.appSession.setAttribute("pageid",id);
-        logger.info("Redirecting to page id : "+id);
-        fc.getExternalContext().redirect("index.xhtml");                
-    }    
-    
+        this.appSession.setAttribute("pageid", id);
+        logger.info("Redirecting to page id : " + id);
+        fc.getExternalContext().redirect("index.xhtml");
+    }
 }

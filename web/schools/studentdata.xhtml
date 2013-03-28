@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <p:growl id="messages" showDetail="true" rendered="true"/>
+        <div id="canvas">
+            <h:form >
+                <div style="align:right">
+                    <p:commandButton styleClass="elevens bolds" value="Back to student details" action="#{schoolBean.redirectToRegisterStudents()}" /> 
+                </div><br /><br />
+                <div>  <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
+                        <h:outputLabel value="Student Name : "/>
+                        <h:inputText value="#{schoolBean.selectedStudent.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required"/>
+                        <h:outputLabel value="Registration Number: "/>
+                        <h:inputText value="#{schoolBean.selectedStudent.identNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required"/>
+                        <h:outputLabel value=""/> 
+                        <h:column>
+                            <h:commandButton value="Update Student Details" styleClass="buttons elevens whites bolds padded" 
+                                             style="color : #fff;" actionListener="#{schoolBean.updateStudent()}"/> 
+                        </h:column>
+                    </h:panelGrid> 
+                </div>
+            </h:form>  
+        </div></h:body></html>

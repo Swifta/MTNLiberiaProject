@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <p:growl id="messages" showDetail="true" rendered="true"/>
+        <div id="canvas">
+            <h:form >
+                <div style="align:right">
+                    <p:commandButton styleClass="elevens bolds" value="Back to school admin details" action="#{schoolBean.redirectToManageAdmins()}" /> 
+                </div><br /><br />
+                            <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
+                                <h:outputLabel value="Pick a school"/>
+                                <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.selectedAdmin.schoolID}">
+                                    <f:selectItem itemLabel="Select a school"/>
+                                    <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
+                                </h:selectOneMenu>
+                                <h:outputLabel value="First Name : "/>
+                                <h:inputText value="#{schoolBean.selectedAdmin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required"/>
+                                <h:outputLabel value="Last Name : "/>
+                                <h:inputText value="#{schoolBean.selectedAdmin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required"/>
+                                <h:outputLabel value="Mobile : "/>
+                                <h:inputText value="#{schoolBean.selectedAdmin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required"/>
+                                <h:outputLabel value="Email Address : "/>
+                                <h:inputText value="#{schoolBean.selectedAdmin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required"/>
+                                <h:outputLabel value=""/>
+                                <h:commandButton value="Update Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.updateSchoolAdmin()}"/> 
+                            </h:panelGrid> 
+            </h:form>  
+        </div></h:body></html>
