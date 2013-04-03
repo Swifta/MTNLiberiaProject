@@ -17,6 +17,15 @@ public class School {
     private String paymentModeId;
     private String partnerServiceId;
 
+    public String getSchoolCode() {
+        return schoolCode;
+    }
+
+    public void setSchoolCode(String schoolCode) {
+        this.schoolCode = schoolCode;
+    }
+    private String schoolCode;
+
     public int getId() {
         return id;
     }

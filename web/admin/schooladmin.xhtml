@@ -8,11 +8,7 @@
                     <p:commandButton styleClass="elevens bolds" value="Back to school admin details" action="#{schoolBean.redirectToManageAdmins()}" /> 
                 </div><br /><br />
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
-                                <h:outputLabel value="Pick a school"/>
-                                <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.selectedAdmin.schoolID}">
-                                    <f:selectItem itemLabel="Select a school"/>
-                                    <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
-                                </h:selectOneMenu>
+                                <h:outputLabel value="School"/><h:outputLabel styleClass="fifteens bolds" value="#{schoolBean.selectedAdmin.schoolName}"/>
                                 <h:outputLabel value="First Name : "/>
                                 <h:inputText value="#{schoolBean.selectedAdmin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required"/>
                                 <h:outputLabel value="Last Name : "/>

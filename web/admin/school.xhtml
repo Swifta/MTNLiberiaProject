@@ -5,14 +5,16 @@
         <div id="canvas">
             <h:form >
                 <div style="align:right">
-                    <p:commandButton styleClass="elevens bolds" value="Back to school details" action="#{schoolBean.redirectToManageSchools()}" /> 
+                     <p:commandButton styleClass="elevens bolds" value="Back to school details" action="#{schoolBean.redirectToManageSchools()}" /> 
                 </div><br /><br />
                 <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
                     <h:outputLabel value="School Name : "/>
                     <h:inputText value="#{schoolBean.selectedSchool.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required"/>
+                    <h:outputLabel value="School Code : "/>
+                    <h:inputText value="#{schoolBean.selectedSchool.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required"/>
 
-                                                 <h:outputLabel value=""/>
+                    <h:outputLabel value=""/>
                     <h:commandButton value="Update School" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.updateSchool()}"/> 
                 </h:panelGrid> 
             </h:form>  

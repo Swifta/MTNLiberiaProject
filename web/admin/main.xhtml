@@ -12,16 +12,18 @@
 
                                 <h:outputLabel value="School Name : "/>
                                 <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required"/>
+                                <h:outputLabel value="School Code : "/>
+                                <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required"/>
                                 <!--  <h:outputLabel value="Pick a payment mode"/>
-                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.paymentModeId}">
-                                      <f:selectItem itemLabel="Select a payment mode"/>
-                                      <f:selectItems value="#{portalAdminBean.paymentModes}" var="paymentMode" itemLabel="#{paymentMode.type}" itemValue="#{paymentMode.id}"/> 
-                                  </h:selectOneMenu>
-                                  <h:outputLabel value="Pick a partner type"/>
-                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.partnerServiceId}">
-                                      <f:selectItem itemLabel="Select a partner service"/>
-                                      <f:selectItems value="#{portalAdminBean.partnerServices}" var="partnerService" itemLabel="#{partnerService.name}" itemValue="#{partnerService.id}"/> 
-                                  </h:selectOneMenu> -->
+                                                                 <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.paymentModeId}">
+                                                                     <f:selectItem itemLabel="Select a payment mode"/>
+                                                                     <f:selectItems value="#{portalAdminBean.paymentModes}" var="paymentMode" itemLabel="#{paymentMode.type}" itemValue="#{paymentMode.id}"/> 
+                                                                 </h:selectOneMenu>
+                                                                 <h:outputLabel value="Pick a partner type"/>
+                                                                 <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.partnerServiceId}">
+                                                                     <f:selectItem itemLabel="Select a partner service"/>
+                                                                     <f:selectItems value="#{portalAdminBean.partnerServices}" var="partnerService" itemLabel="#{partnerService.name}" itemValue="#{partnerService.id}"/> 
+                                                                 </h:selectOneMenu> -->
                                 <h:outputLabel value=""/>
                                 <h:commandButton value="Create School" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createSchool()}"/> 
                             </h:panelGrid>                    
@@ -39,8 +41,10 @@
                                           paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                                           rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.schools}" var="schools">
                             <f:facet name="header">List of Schools</f:facet>
-                            <p:column headerText="School Name" sortBy="#{schools.name}" style="width:95%">
+                            <p:column headerText="School Name" sortBy="#{schools.name}">
                                 <h:outputLabel value="#{schools.name}"/>
+                            </p:column><p:column headerText="School Code" sortBy="#{schools.schoolCode}">
+                                <h:outputLabel value="#{schools.schoolCode}"/>
                             </p:column>
                          <!--   <p:column headerText="Payment Mode Name" sortBy="#{schools.paymentModeType}">
                                 <h:outputLabel value="#{schools.paymentModeType}"/>
@@ -48,7 +52,7 @@
                             <p:column headerText="Partner Service" sortBy="#{schools.partnerServiceName}">
                                 <h:outputLabel value="#{schools.partnerServiceName}"/>
                             </p:column>  --><p:column style="width:5%" >  
-                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchool(schools.id)}"> 
+                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchool(schools.id)}" style="width:5%"> 
                                 </p:commandLink>  
                             </p:column>                   
                         </p:dataTable></h:form></p:tab>

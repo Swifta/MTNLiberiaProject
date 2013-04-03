@@ -41,6 +41,7 @@ public class PortalAdminDatabase {
             school.setId(res.getInt("id"));
             school.setPaymentModeType(res.getObject("payment_mode_id").toString());
             school.setPartnerServiceName(res.getObject("partner_id").toString());
+            school.setSchoolCode(res.getString("school_code"));
 
             schools.add(school);
         }
@@ -52,7 +53,7 @@ public class PortalAdminDatabase {
     public boolean createSchoolAdmin(SchoolAdmin admin) throws SQLException, IOException, JSONException {
         School sch = this.getSchoolDetails(admin.getSchoolID());
         String username = new UsernameGenerator().generateUsername(sch.getName());
-        String sqlQuery = "insert into schooladmins values (" + (getLastID("schooladmins") + 1) + ",'" + admin.getFirstName() + "','" + admin.getLastName() + "','" + admin.getPhoneNo() + "','" + admin.getEmailAddress() + "'," + admin.getSchoolID() + ",'" + username + "',curdate())";
+        String sqlQuery = "insert into schooladmins values (" + (getLastID("schooladmins") + 1) + ",'" + admin.getFirstName() + "','" + admin.getLastName() + "','" + admin.getPhoneNo() + "','" + admin.getEmailAddress() + "'," + admin.getSchoolID() + ",'" + username + "',now())";
         logger.info("Query : " + sqlQuery);
         JDCConnection connection = PortalDatabase.source.getConnection();
         boolean ex = connection.createStatement().execute(sqlQuery);
@@ -144,6 +145,7 @@ public class PortalAdminDatabase {
         School sch = new School();
         while (res.next()) {
             sch.setName(res.getString("name"));
+            sch.setSchoolCode(res.getString("school_code"));
             sch.setId(res.getInt("id"));
         }
         logger.info("School Name : " + sch.getName());
@@ -163,6 +165,10 @@ public class PortalAdminDatabase {
             schAdmin.setLastName(res.getString("lastname"));
             schAdmin.setPhoneNo(res.getString("mobile"));
             schAdmin.setUsername(res.getString("username"));
+            schAdmin.setId(res.getInt("id"));
+            School sch = this.getSchoolDetails(res.getInt("schoolid"));
+            schAdmin.setSchoolName(sch.getName());
+            schAdmin.setSchoolID(sch.getId());
             schAdmin.setId(res.getInt("id"));
         }
         logger.info("School Name : " + schAdmin.getEmailAddress());

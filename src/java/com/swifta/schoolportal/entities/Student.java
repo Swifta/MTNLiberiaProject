@@ -13,7 +13,25 @@ public class Student {
     private String name = "";
     private String identNo = "";
     private String lastUpdate = "";
-    private int id;
+    private int id = 0;
+    private String schoolCode = "";
+
+    public String getSchoolDetails() {
+        return schoolDetails;
+    }
+
+    public void setSchoolDetails(String schoolDetails) {
+        this.schoolDetails = schoolDetails;
+    }
+    private String schoolDetails = "";
+
+    public String getSchoolCode() {
+        return schoolCode;
+    }
+
+    public void setSchoolCode(String schoolCode) {
+        this.schoolCode = schoolCode;
+    }
 
     public int getId() {
         return id;

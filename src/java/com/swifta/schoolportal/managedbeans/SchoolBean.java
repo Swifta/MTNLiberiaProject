@@ -128,7 +128,27 @@ public class SchoolBean {
     }
 
     public void redirectToManageSchools() throws IOException {
+        logger.info("..........redirect to manage schools...............");
         portalSession.redirect(PageUrls.ADMIN_MAIN);
+    }
+
+    public String retrieveSchoolName(String schoolId) {
+        String schoolName = "";
+        School school = new School();
+        logger.info("its the school id........................................////////////////////" + schoolId);
+        //  this.selectedschool = new school();
+        logger.info("its the student .......................................////////////////////" + school.toString());
+        try {
+            school = adminDatabase.getSchoolDetails(Integer.valueOf(schoolId));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        logger.info("its the school after db retrival .......................................////////////////////" + school.toString());
+        if (school != null) {
+            schoolName = school.getName();
+        };
+        logger.info("its the school name .......................................////////////////////" + schoolName);
+        return schoolName;
     }
 
     public void retrieveSchool(String schoolId) throws IOException {
@@ -257,7 +277,7 @@ public class SchoolBean {
                 //hard coded ids....prone to fail if the id of the default payment methods fail.
                 school.setPartnerServiceId("1");
                 school.setPaymentModeId("1");
-                if (!schoolDatabase.existingSchool(school.getName())) {
+                if (!schoolDatabase.existingSchool(school)) {
                     if (!schoolDatabase.createSchool(school)) {
                         showMessage("New School created ... ");
                         school = new School();
@@ -279,8 +299,8 @@ public class SchoolBean {
         if (validate(student)) {
             logger.info("after validation");
             try {
-                if (!studentDatabase.existingStudent(student)) {
-                    if (!studentDatabase.createStudent(student, schoolName)) {
+                if (!studentDatabase.existingStudent(student,schoolName)) {
+                    if (!studentDatabase.createStudent(student)) {
                         showMessage("New Student created ... ");
                         student = new Student();
                     }
@@ -298,11 +318,15 @@ public class SchoolBean {
 
     public void updateStudent() {
         logger.info("Afer create student " + selectedStudent.toString());
-        if (validate(selectedStudent)) {
+        if (validateUpdate(selectedStudent)) {
             logger.info("after validation");
             try {
-                if (!studentDatabase.updateStudent(selectedStudent)) {
-                    showMessage("Student data updated ... ");
+                if (!studentDatabase.existingStudent(selectedStudent)) {
+                    if (!studentDatabase.updateStudent(selectedStudent)) {
+                        showMessage("Student data updated ... ");
+                    }
+                } else {
+                    showMessage("Existing student found in the records with same registration number ... ");
                 }
             } catch (Exception ex) {
                 logger.error(ex);
@@ -332,8 +356,12 @@ public class SchoolBean {
         if (validate(selectedSchool)) {
             logger.info("after validation");
             try {
-                if (!schoolDatabase.updateSchool(selectedSchool)) {
-                    showMessage("School data updated ... ");
+                if (!schoolDatabase.existingSchool(selectedSchool)) {
+                    if (!schoolDatabase.updateSchool(selectedSchool)) {
+                        showMessage("School data updated ... ");
+                    }
+                } else {
+                    showMessage("Existing school found in the records; confirm that the code or name doesn't exit... ");
                 }
             } catch (Exception ex) {
                 logger.error(ex);
@@ -419,6 +447,28 @@ public class SchoolBean {
             if (student.getIdentNo() != null && student.getIdentNo().length() > 0) {
                 logger.info("student id number valid....");
                 return true;
+            } else {
+                showMessage("Registration number required...");
+                return false;
+            }
+        } else {
+            showMessage("Name of student required ... ");
+            return false;
+        }
+    }
+
+    private boolean validateUpdate(Student student) {
+        logger.info("student name not null....");
+        if (student.getName() != null && student.getName().length() > 0) {
+            logger.info("student name valid....");
+            if (student.getIdentNo() != null && student.getIdentNo().length() > 0) {
+                logger.info("student id number valid...." + student.getSchoolCode());
+                if (student.getIdentNo().toLowerCase().startsWith(student.getSchoolCode().toLowerCase())) {
+                    return true;
+                } else {
+                    showMessage("Registration number does not conform to the expected format...");
+                    return false;
+                }
             } else {
                 showMessage("Registration number required...");
                 return false;
