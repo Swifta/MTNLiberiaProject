@@ -32,9 +32,9 @@
 
                     <h:form id="form">          
                         <p:dataTable paginator="true" rows="100"  
-                                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} 
-                                                                             {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" styleClass="elevens datatables" 
-                                                                             value="#{schoolBean.students}" var="student" >
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} 
+                                     {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" styleClass="elevens datatables" 
+                                     value="#{schoolBean.students}" var="student" >
                             <f:facet name="header">Registered Students (Select a row to update the record)</f:facet>
 
 
@@ -58,10 +58,10 @@
                     </h:form>
 
                 </p:tab>
-                <p:tab title="Transaction History" id="transhist">
+                <p:tab title="Transaction History" id="transhist"><p:poll interval="3" listener="#{schoolBean.histories}" update="txnHistory" />
                     <p:dataTable paginator="true" rows="20"  
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                 rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history">
+                                 rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
                         <f:facet name="header">Transaction History</f:facet>
                         <p:column headerText="Name of Student">
                             <h:outputLabel value="#{history.studentName}"/>

@@ -2,11 +2,12 @@
       xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
         <p:growl id="messages" showDetail="true" rendered="true"/>
-        <div id="canvas">
+        <div id="canvas"><h:outputLabel value="" styleClass="fifteens bolds centers"/>
             <h:form >
                 <div style="align:right">
                     <p:commandButton styleClass="elevens bolds" value="Back to school admin details" action="#{schoolBean.redirectToManageAdmins()}" /> 
-                </div><br /><br />
+                </div><div style="align:center"><h:outputLabel value="Edit School Admin Information" styleClass="fifteens bolds centers"/>
+                </div><br /><br /><br/><br /><br />
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
                                 <h:outputLabel value="School"/><h:outputLabel styleClass="fifteens bolds" value="#{schoolBean.selectedAdmin.schoolName}"/>
                                 <h:outputLabel value="First Name : "/>

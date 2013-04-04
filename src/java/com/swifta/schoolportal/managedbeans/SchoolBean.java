@@ -255,6 +255,7 @@ public class SchoolBean {
             try {
                 if (!adminDatabase.existingSchoolAdmin(admin)) {
                     if (!adminDatabase.createSchoolAdmin(admin)) {
+                        logger.info("The admin school id is "+admin.getSchoolID());
                         showMessage("New School Admin created ... ");
                         admin = new SchoolAdmin();
                     }
@@ -299,7 +300,7 @@ public class SchoolBean {
         if (validate(student)) {
             logger.info("after validation");
             try {
-                if (!studentDatabase.existingStudent(student,schoolName)) {
+                if (!studentDatabase.existingStudent(student, schoolName)) {
                     if (!studentDatabase.createStudent(student)) {
                         showMessage("New Student created ... ");
                         student = new Student();
@@ -429,7 +430,19 @@ public class SchoolBean {
             logger.info("school name not null....");
             if (school.getName().length() > 0) {
                 logger.info("school name valid....");
-                return true;
+                if (school.getSchoolCode().length() > 0) {
+                    logger.info("school code valid....");
+                    if (school.getSchoolCode().length() < 3) {
+                        logger.info("school code length valid....");
+                        return true;
+                    } else {
+                        showMessage("School registration code exceeds 2 characters ... ");
+                        return false;
+                    }
+                } else {
+                    showMessage("School registration code required ... ");
+                    return false;
+                }
             } else {
                 showMessage("Name of school required ... ");
                 return false;
@@ -466,7 +479,7 @@ public class SchoolBean {
                 if (student.getIdentNo().toLowerCase().startsWith(student.getSchoolCode().toLowerCase())) {
                     return true;
                 } else {
-                    showMessage("Registration number does not conform to the expected format...");
+                    showMessage("Registration number does not conform to the expected format. Missing correct school registration code...");
                     return false;
                 }
             } else {

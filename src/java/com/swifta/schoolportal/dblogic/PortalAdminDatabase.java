@@ -148,7 +148,7 @@ public class PortalAdminDatabase {
             sch.setSchoolCode(res.getString("school_code"));
             sch.setId(res.getInt("id"));
         }
-        logger.info("School Name : " + sch.getName());
+        logger.info("School Name : " + sch.getName()+ ">>>>"+sqlQuery);
         //connection.close();
         PortalDatabase.source.returnConnection(connection);
         return sch;

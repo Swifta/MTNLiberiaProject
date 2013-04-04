@@ -89,7 +89,7 @@ public class SchoolDatabase {
                 + "from Transactions tr, Transaction_History th, Person_info ps,Partner_Service_Unit pu where tr.id ="
                 + " th.transaction_id and ps.identification_no = tr.person_id and ps.payment_serviceunit_id = pu.id"
                 + " and tr.status_code_id = '01' and pu.id = " + schoolId;
-        logger.info(sqlQuery);
+        logger.info("history query.......>>>"+sqlQuery);
 
         JDCConnection connection = PortalDatabase.source.getConnection();
         ResultSet res = connection.createStatement().executeQuery(sqlQuery);
