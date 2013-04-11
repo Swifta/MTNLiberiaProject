@@ -1,5 +1,5 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
         <div id="pin">
             <div class="lefts centers bolds whites padded"><br />
@@ -15,7 +15,9 @@
                             <h:outputLabel value="Enter your PIN:"/>
                         </h:column>
                         <h:column>
-                            <h:inputText class="texts padded elevens" size="30" value="#{loginBean.password}"/>
+                            <h:inputText class="texts padded elevens" size="30" value="#{loginBean.password}" validatorMessage="Validation Error: Ensure the pin doesn't contain special characters, space, alphabets and is 4-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{3,3}" />
+                    </h:inputText>
                         </h:column>                    
                         <h:column>
                             <h:commandButton value="Send PIN" class="bolds buttons padded elevens" action="#{loginBean.validatePin()}"/>

@@ -25,7 +25,7 @@ public class PartnerServiceDatabase {
     private PortalSession portalSession;
 
     public List<PartnerService> getAllPartnerServices() throws SQLException {
-        String sqlQuery = "select * from partner_service";
+        String sqlQuery = "select * from Partner_service";
         logger.info(sqlQuery);
 
         JDCConnection connection = PortalDatabase.source.getConnection();

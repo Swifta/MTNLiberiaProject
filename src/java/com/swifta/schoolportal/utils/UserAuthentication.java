@@ -8,8 +8,7 @@ import com.swifta.schoolportal.dblogic.JDCConnection;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
-import main.PropertyFileReader;
+import java.sql.PreparedStatement;
 import org.apache.log4j.Logger;
 
 /**
@@ -24,10 +23,14 @@ public class UserAuthentication {
     }
 
     public boolean authenticateAdmin(String username, String password) throws IOException, SQLException {
-        String sqlQuery = "select * from admins where username = '" + username + "' and password= '" + password + "'";
+        String sqlQuery = "select * from admins where username = ? and password= ?";
+
         logger.info(sqlQuery);
         JDCConnection con = PortalDatabase.source.getConnection();
-        ResultSet res = con.createStatement().executeQuery(sqlQuery);
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, username);
+        prepStmt.setString(2, password);
+        ResultSet res = prepStmt.executeQuery();
         PortalDatabase.source.returnConnection(con);
         return res.next();
     }
@@ -42,6 +45,9 @@ public class UserAuthentication {
             fileName = "/opt/swifta/server/properties/database.properties";
         }
         if (System.getProperty("os.name").toLowerCase().indexOf("nix") >= 0) {
+            fileName = "/opt/swifta/server/properties/database.properties";
+        }
+        if (fileName.length() <= 0) {
             fileName = "/opt/swifta/server/properties/database.properties";
         }
         logger.info("Fetching properties file from : " + fileName);

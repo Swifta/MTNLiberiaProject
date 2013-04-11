@@ -17,9 +17,13 @@
                     <h:form>
                         <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
                             <h:outputLabel value="Student Name : "/>
-                            <h:inputText value="#{schoolBean.student.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required"/>
+                            <h:inputText value="#{schoolBean.student.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required" validatorMessage="Validation Error: Ensure the student's name doesn't contain special characters and is between 4 to 50-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                    </h:inputText>
                             <h:outputLabel value="Registration Number: "/>
-                            <h:inputText value="#{schoolBean.student.identNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required"/>
+                            <h:inputText value="#{schoolBean.student.identNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required" validatorMessage="Validation Error: Ensure the student registration number doesn't contain special characters, space and is between 2 to 10-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,10}$" />
+                    </h:inputText>
                             <h:outputLabel value=""/> 
                             <h:column>
                                 <h:commandButton value="Create Student" styleClass="buttons elevens whites bolds padded" 
@@ -54,34 +58,35 @@
                                 </p:commandLink>  
                             </p:column> 
 
-                        </p:dataTable>  
+                        </p:dataTable> 
                     </h:form>
 
                 </p:tab>
-                <p:tab title="Transaction History" id="transhist"><p:poll interval="3" listener="#{schoolBean.histories}" update="txnHistory" />
-                    <p:dataTable paginator="true" rows="20"  
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                 rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
-                        <f:facet name="header">Transaction History</f:facet>
-                        <p:column headerText="Name of Student">
-                            <h:outputLabel value="#{history.studentName}"/>
-                        </p:column>
-                        <p:column headerText="Amount Paid">
-                            <h:outputLabel value="#{history.amountPaid}"/>
-                        </p:column>                        
-                        <p:column headerText="Paid By">
-                            <h:outputLabel value="#{history.paidBy}"/>
-                        </p:column>                        
-                        <p:column headerText="Payment Reference">
-                            <h:outputLabel value="#{history.paymentRef}"/>
-                        </p:column>                        
-                        <p:column headerText="Transaction ID">
-                            <h:outputLabel value="#{history.transactionID}"/>
-                        </p:column>                        
-                        <p:column headerText="Date">
-                            <h:outputLabel value="#{history.date}"/>
-                        </p:column>                        
-                    </p:dataTable>                    
+                <p:tab title="Transaction History" id="transhist">                   
+                    <h:form>
+                        <p:dataTable paginator="true" rows="20"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
+                            <f:facet name="header">Transaction History</f:facet>
+                            <p:column headerText="Name of Student">
+                                <h:outputLabel value="#{history.studentName}"/>
+                            </p:column>
+                            <p:column headerText="Amount Paid">
+                                <h:outputLabel value="#{history.amountPaid}"/>
+                            </p:column>                        
+                            <p:column headerText="Paid By">
+                                <h:outputLabel value="#{history.paidBy}"/>
+                            </p:column>                        
+                            <p:column headerText="Payment Reference">
+                                <h:outputLabel value="#{history.paymentRef}"/>
+                            </p:column>                        
+                            <p:column headerText="Transaction ID">
+                                <h:outputLabel value="#{history.transactionID}"/>
+                            </p:column>                        
+                            <p:column headerText="Date">
+                                <h:outputLabel value="#{history.date}"/>
+                            </p:column>                        
+                        </p:dataTable>                    <p:poll interval="5" listener="#{schoolBean.getHistories()}" update="txnHistory" /></h:form>
                 </p:tab>            
             </p:tabView>            
         </div>

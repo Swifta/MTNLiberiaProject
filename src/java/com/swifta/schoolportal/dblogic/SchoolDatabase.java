@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.PreparedStatement;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.json.me.JSONException;
@@ -30,11 +31,14 @@ public class SchoolDatabase {
     private PortalSession portalSession;
 
     public SchoolAdmin getSchoolAdminDetails(String username) throws SQLException {
-        String sqlQuery = "select * from schooladmins where username = '" + username + "'";
+        String sqlQuery = "select * from schooladmins where username = ?";
         logger.info(sqlQuery);
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
-
+      
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, username);
+        ResultSet res = prepStmt.executeQuery();
         SchoolAdmin admin = null;
 
         while (res.next()) {
@@ -52,17 +56,17 @@ public class SchoolDatabase {
             admin.setSchoolID(school.getId());
 
         }
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
         return admin;
     }
 
     public List<Student> getAllSchoolStudents(int schoolId) throws SQLException {
-        String sqlQuery = "select * from person_info where payment_serviceunit_id = " + schoolId;
-        logger.info(sqlQuery);
-
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
-
+        String sqlQuery = "select * from Person_info where payment_serviceunit_id = ?";
+           logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setInt(1, schoolId);
+        ResultSet res = prepStmt.executeQuery();
         ArrayList<Student> students = new ArrayList<Student>();
 
         while (res.next()) {
@@ -75,7 +79,7 @@ public class SchoolDatabase {
 
             students.add(st);
         }
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
         return students;
     }
 
@@ -88,12 +92,13 @@ public class SchoolDatabase {
                 + "tr.payer_id as 'Paid by',tr.payment_ref as 'Payment Reference', tr.fundamo_id as 'Transaction ID'"
                 + "from Transactions tr, Transaction_History th, Person_info ps,Partner_Service_Unit pu where tr.id ="
                 + " th.transaction_id and ps.identification_no = tr.person_id and ps.payment_serviceunit_id = pu.id"
-                + " and tr.status_code_id = '01' and pu.id = " + schoolId;
+                + " and tr.status_code_id = '01' and pu.id = ?";
         logger.info("history query.......>>>"+sqlQuery);
 
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
-
+          JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setInt(1, schoolId);
+         ResultSet res = prepStmt.executeQuery();
         ArrayList<TransactionHistory> histories = new ArrayList<TransactionHistory>();
 
         while (res.next()) {
@@ -109,7 +114,7 @@ public class SchoolDatabase {
             histories.add(th);
 
         }
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
         return histories;
 
     }
@@ -128,11 +133,19 @@ public class SchoolDatabase {
     }
 
     public boolean createSchool(School school) throws SQLException, IOException, JSONException {
-        String sqlQuery = "insert into partner_service_unit values (" + (getLastID("partner_service_unit") + 1) + ",'" + school.getPartnerServiceId() + "','" + school.getName() + "','" + school.getPaymentModeId() + "','1','" + school.getSchoolCode().toUpperCase().trim() + "')";
+       String sqlQuery = "insert into Partner_Service_Unit (id,partner_id,name,payment_mode_id,has_admin,school_code) values (?,?,?,?,?,?)";
         logger.info("Query : " + sqlQuery);
         JDCConnection connection = PortalDatabase.source.getConnection();
-        boolean ex = connection.createStatement().execute(sqlQuery);
-        //connection.close();
+        PreparedStatement prepStmt = connection.prepareStatement(sqlQuery);
+        prepStmt.setInt(1, (getLastID("Partner_Service_Unit") + 1));
+        prepStmt.setString(2, school.getPartnerServiceId());
+        prepStmt.setString(3, school.getName());
+        prepStmt.setString(4, school.getPaymentModeId());
+        prepStmt.setString(5,"1");
+        prepStmt.setString(6, school.getSchoolCode().toUpperCase().trim());
+        boolean ex = prepStmt.execute();
+        
+          //connection.close();
 
         PortalDatabase.source.returnConnection(connection);
 
@@ -142,10 +155,13 @@ public class SchoolDatabase {
     }
 
     public boolean updateSchool(School school) throws SQLException, IOException, JSONException {
-        String sqlQuery = "update partner_service_unit set name = '" + school.getName() + "',school_code= '" + school.getSchoolCode().toUpperCase().trim() + "' where id = " + school.getId();
+        String sqlQuery = "update Partner_Service_Unit set name = ?,school_code= ? where id = " + school.getId();
         logger.info("Query : " + sqlQuery);
         JDCConnection connection = PortalDatabase.source.getConnection();
-        boolean ex = connection.createStatement().execute(sqlQuery);
+        PreparedStatement prepStmt = connection.prepareStatement(sqlQuery);
+        prepStmt.setString(1, school.getName());
+        prepStmt.setString(2, school.getSchoolCode().toUpperCase().trim());
+        boolean ex = prepStmt.execute();
 
         PortalDatabase.source.returnConnection(connection);
 
@@ -154,9 +170,14 @@ public class SchoolDatabase {
     }
 
     public boolean existingSchool(School school) throws SQLException {
-        String sqlQuery = "select * from partner_service_unit where lower(name) = '" + school.getName().toLowerCase().trim() + "' or lower(school_code) = '" + school.getSchoolCode().toLowerCase().trim() + "'";
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
+        String sqlQuery = "select * from Partner_Service_Unit where lower(name) = ? or lower(school_code) = ?";
+      
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, school.getName().toLowerCase().trim());
+        prepStmt.setString(2, school.getSchoolCode().toLowerCase().trim());
+        ResultSet res = prepStmt.executeQuery();
         boolean ex = false;
         School newSchool = new School();
         while (res.next()) {
@@ -176,31 +197,39 @@ public class SchoolDatabase {
 
         }
         logger.info("the last part of the iteration");
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
 
         //connection.close();
         return ex;
     }
 
     public boolean existingSchoolName(School school) throws SQLException {
-        String sqlQuery = "select * from partner_service_unit where lower(name) = '" + school.getName().toLowerCase().trim() + "'";
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
+        String sqlQuery = "select * from Partner_Service_Unit where lower(name) = ?";
+       
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, school.getName().toLowerCase().trim());
+        ResultSet res = prepStmt.executeQuery();
         boolean ex = res.next();
 
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
 
         //connection.close();
         return ex;
     }
 
     public boolean existingSchoolCode(School school) throws SQLException {
-        String sqlQuery = "select * from partner_service_unit where lower(school_code) = '" + school.getSchoolCode().toLowerCase().trim() + "'";
-        JDCConnection connection = PortalDatabase.source.getConnection();
-        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
+        String sqlQuery = "select * from Partner_Service_Unit where lower(school_code) = ?";
+      
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, school.getSchoolCode().toLowerCase().trim());
+        ResultSet res = prepStmt.executeQuery();
         boolean ex = res.next();
 
-        PortalDatabase.source.returnConnection(connection);
+        PortalDatabase.source.returnConnection(con);
 
         //connection.close();
         return ex;

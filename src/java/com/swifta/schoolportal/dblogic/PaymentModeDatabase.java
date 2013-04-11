@@ -23,7 +23,7 @@ public class PaymentModeDatabase {
     private PortalSession portalSession;
 
     public List<PaymentMode> getAllPaymentModes() throws SQLException {
-        String sqlQuery = "select * from payment_mode";
+        String sqlQuery = "select * from Payment_Mode";
         logger.info(sqlQuery);
 
         JDCConnection connection = PortalDatabase.source.getConnection();

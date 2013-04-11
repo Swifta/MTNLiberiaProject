@@ -11,9 +11,13 @@
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
                                 <h:outputLabel value="School Name : "/>
-                                <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required"/>
+                                <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                    </h:inputText>
                                 <h:outputLabel value="School Code : "/>
-                                <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required"/>
+                                <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
+                    </h:inputText>
                                 <!--  <h:outputLabel value="Pick a payment mode"/>
                                                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.paymentModeId}">
                                                                      <f:selectItem itemLabel="Select a payment mode"/>
@@ -66,13 +70,21 @@
                                     <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
                                 </h:selectOneMenu>
                                 <h:outputLabel value="First Name : "/>
-                                <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required"/>
+                                <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required" validatorMessage="Validation Error: Ensure the first name doesn't contain special characters, space and is between 3 to 15-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
+                    </h:inputText>
                                 <h:outputLabel value="Last Name : "/>
-                                <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required"/>
+                                <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required" validatorMessage="Validation Error: Ensure the last name doesn't contain special characters, space and is between 3 to 15-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
+                    </h:inputText>
                                 <h:outputLabel value="Mobile : "/>
-                                <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required"/>
+                                <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required" validatorMessage="Validation Error: Ensure the mobile number doesn't contain special characters, space and is between 6 to 15-character lenght">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{5,15}" />
+                    </h:inputText>
                                 <h:outputLabel value="Email Address : "/>
-                                <h:inputText value="#{schoolBean.admin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required"/>
+                                <h:inputText value="#{schoolBean.admin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required" validatorMessage="Validation Error: Ensure this contains a valid email address">
+                        <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                    </h:inputText>
                                 <h:outputLabel value=""/>
                                 <h:commandButton value="Create Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createAdmin()}"/> 
                             </h:panelGrid>                    
