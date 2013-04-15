@@ -106,7 +106,7 @@ public class SchoolDatabase {
             TransactionHistory th = new TransactionHistory();
             th.setDate(res.getString(1));
             th.setStudentName(res.getString(2));
-            th.setAmountPaid(res.getString(3));
+            th.setAmountPaid(String.valueOf(res.getDouble(3) / 100));
             th.setPaidBy(res.getString(4));
             th.setPaymentRef(res.getString(5));
             th.setTransactionID(res.getString(6));

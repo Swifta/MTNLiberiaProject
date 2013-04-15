@@ -17,7 +17,7 @@ public class TransactionHistory {
     }
 
     public String getAmountPaid() {
-        return amountPaid;
+        return amountPaid ;
     }
 
     public void setAmountPaid(String amountPaid) {
