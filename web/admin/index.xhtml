@@ -19,14 +19,14 @@
             </div>
         </div>        
         <c:if test="#{portalSession.appSession.getAttribute('pageid') == 0}">
-            <ui:include src="login.xhtml"/>
+            <ui:include src="/admin/login.xhtml"/>
         </c:if>
         <c:if test="#{portalSession.appSession.getAttribute('pageid') == 99}">
-            <ui:include src="main.xhtml"/>
+            <ui:include src="/admin/main.xhtml"/>
         </c:if> <c:if test="#{portalSession.appSession.getAttribute('pageid') == 3}">
-            <ui:include src="school.xhtml"/>
+            <ui:include src="/admin/school.xhtml"/>
         </c:if><c:if test="#{portalSession.appSession.getAttribute('pageid') == 2}">
-            <ui:include src="schooladmin.xhtml"/>
+            <ui:include src="/admin/schooladmin.xhtml"/>
         </c:if>       
     </h:body>
 </html>

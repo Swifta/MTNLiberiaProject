@@ -5,19 +5,20 @@
 
         <div id="canvas">
             <p:tabView styleClass="elevens bolds" dynamic="true" activeIndex="#{schoolBean.activeIndex}">
-                <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}" update=":form:growl"/>   <p:tab title="Manage Schools" id="manageschool">
+                <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}" update=":form:growl"/>   
+                <p:tab title="Manage Schools" id="manageschool">
                     <p:dialog header="Add New School" widgetVar="school" styleClass="elevens bolds" width="450" resizable="false" modal="true">
                         <h:form>
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
                                 <h:outputLabel value="School Name : "/>
                                 <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                                </h:inputText>
                                 <h:outputLabel value="School Code : "/>
                                 <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
+                                </h:inputText>
                                 <!--  <h:outputLabel value="Pick a payment mode"/>
                                                                  <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.school.paymentModeId}">
                                                                      <f:selectItem itemLabel="Select a payment mode"/>
@@ -71,20 +72,20 @@
                                 </h:selectOneMenu>
                                 <h:outputLabel value="First Name : "/>
                                 <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required" validatorMessage="Validation Error: Ensure the first name doesn't contain special characters, space and is between 3 to 15-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
+                                </h:inputText>
                                 <h:outputLabel value="Last Name : "/>
                                 <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required" validatorMessage="Validation Error: Ensure the last name doesn't contain special characters, space and is between 3 to 15-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
+                                </h:inputText>
                                 <h:outputLabel value="Mobile : "/>
                                 <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required" validatorMessage="Validation Error: Ensure the mobile number doesn't contain special characters, space and is between 6 to 15-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{5,15}" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{5,15}" />
+                                </h:inputText>
                                 <h:outputLabel value="Email Address : "/>
                                 <h:inputText value="#{schoolBean.admin.emailAddress}" styleClass="elevens padded" size="35" required="true" requiredMessage="Email Address required" validatorMessage="Validation Error: Ensure this contains a valid email address">
-                        <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-                    </h:inputText>
+                                    <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                                </h:inputText>
                                 <h:outputLabel value=""/>
                                 <h:commandButton value="Create Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.createAdmin()}"/> 
                             </h:panelGrid>                    
@@ -128,7 +129,44 @@
                         </p:dataTable>
                     </h:form>
                 </p:tab>
-
+                <p:tab title="Transaction History" id="transhist">       
+                    <div style="text-align: right;padding: 5px;" class="elevens">
+                        <h:form>
+                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                        </h:form>
+                    </div>
+                    <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value="Select a school and wait for transactions to reload"/>
+                            <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
+                                <p:ajax listener="#{schoolBean.retrieveSelectedSchool(schoolBean.admin.schoolID)}" event="valueChange"/>
+                                <f:selectItem itemLabel="Select a school"/>
+                                <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
+                            </h:selectOneMenu></h:panelGrid>
+                        <p:dataTable paginator="true" rows="20"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
+                            <f:facet name="header">Transaction History</f:facet>
+                            <p:column headerText="Name of Student">
+                                <h:outputLabel value="#{history.studentName}"/>
+                            </p:column>
+                            <p:column headerText="Amount Paid">
+                                <h:outputLabel value="#{history.amountPaid}"/>
+                            </p:column>                        
+                            <p:column headerText="Paid By">
+                                <h:outputLabel value="#{history.paidBy}"/>
+                            </p:column>                        
+                            <p:column headerText="Payment Reference">
+                                <h:outputLabel value="#{history.paymentRef}"/>
+                            </p:column>                        
+                            <p:column headerText="Fundamo Transaction ID">
+                                <h:outputLabel value="#{history.transactionID}"/>
+                            </p:column>                        
+                            <p:column headerText="Date">
+                                <h:outputLabel value="#{history.date}"/>
+                            </p:column>                        
+                        </p:dataTable>                    
+                        <p:poll interval="5" listener="#{schoolBean.getHistories()}" update="txnHistory" /></h:form>
+                </p:tab>      
             </p:tabView>
         </div>
     </h:body>

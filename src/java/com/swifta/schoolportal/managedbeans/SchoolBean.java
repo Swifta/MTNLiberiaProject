@@ -20,6 +20,8 @@ import javax.faces.bean.SessionScoped;
 import org.apache.log4j.Logger;
 //import org.primefaces.event.CellEditEvent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -39,7 +41,9 @@ public class SchoolBean {
     private StudentDatabase studentDatabase = new StudentDatabase();
     private Logger logger = Logger.getLogger(SchoolBean.class);
     private List<Student> students;
-    private List<TransactionHistory> histories;
+    private List<TransactionHistory> histories, schoolPayHistories;
+    private School selectedSchool;
+    private SchoolAdmin selectedAdmin;
     private PortalSession portalSession;
     private School school;
     private PaymentMode paymentMode;
@@ -71,8 +75,11 @@ public class SchoolBean {
     public void setSelectedSchool(School selectedSchool) {
         this.selectedSchool = selectedSchool;
     }
-    private School selectedSchool;
-    private SchoolAdmin selectedAdmin;
+
+    public void retrieveSelectedSchool(String newValue) {
+        portalSession.getAppSession().setAttribute("portal_admin_school_id", newValue);
+        logger.info("-----------------------the portal session selected school Id is >>>>>>>>>>>>>>>>new value= " + newValue + " : old value= ");
+    }
 
     public int getStudentId() {
         logger.info("-------------------student id >>>" + studentId);
@@ -81,6 +88,14 @@ public class SchoolBean {
 
     public void setStudentId(int studentId) {
         this.studentId = studentId;
+    }
+
+    public List<TransactionHistory> getSchoolPayHistories() {
+        return schoolPayHistories;
+    }
+
+    public void setSchoolPayHistories(List<TransactionHistory> schoolPayHistories) {
+        this.schoolPayHistories = schoolPayHistories;
     }
 
     public SchoolBean() {
@@ -92,6 +107,7 @@ public class SchoolBean {
         selectedSchool = new School();
         portalSession = new PortalSession();
         studentDataModel = new StudentDataModel(getStudents());
+        portalSession.getAppSession().setAttribute("portal_admin_school_id", 0);
     }
 
     public SchoolAdmin getAdmin() {
@@ -255,7 +271,7 @@ public class SchoolBean {
             try {
                 if (!adminDatabase.existingSchoolAdmin(admin)) {
                     if (!adminDatabase.createSchoolAdmin(admin)) {
-                        logger.info("The admin school id is "+admin.getSchoolID());
+                        logger.info("The admin school id is " + admin.getSchoolID());
                         showMessage("New School Admin created ... ");
                         admin = new SchoolAdmin();
                     }
