@@ -4,22 +4,22 @@
         <p:growl id="messages" showDetail="true" rendered="true"/>
         <div id="canvas"><h:form >
                 <div style="align:right">
-                     <p:commandButton styleClass="elevens bolds" value="Back to school details" action="#{schoolBean.redirectToManageSchools()}" /> 
-                </div><div style="align:center"><h:outputLabel value="Edit School Information" styleClass="fifteens bolds centers"/>
-                </div><br /><br /><br/><br /><br />
-                <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
+                    <p:commandButton styleClass="elevens bolds" value="Back to school details" action="#{schoolBean.redirectToManageSchools()}" /> 
+                </div><p:fieldset legend="Edit School Information" styleClass="fifteens bolds centers">  
+                    <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
-                    <h:outputLabel value="School Name : "/>
-                    <h:inputText value="#{schoolBean.selectedSchool.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
-                    </h:inputText>
-                    <h:outputLabel value="School Code : "/>
-                    <h:inputText value="#{schoolBean.selectedSchool.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
-                    </h:inputText>
+                        <h:outputLabel value="School Name : "/>
+                        <h:inputText value="#{schoolBean.selectedSchool.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character lenght">
+                            <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                        </h:inputText>
+                        <h:outputLabel value="School Code : "/>
+                        <h:inputText value="#{schoolBean.selectedSchool.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character lenght">
+                            <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
+                        </h:inputText>
 
-                    <h:outputLabel value=""/>
-                    <h:commandButton value="Update School" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.updateSchool()}"/> 
-                </h:panelGrid> 
+                        <h:outputLabel value=""/>
+                        <h:commandButton value="Update School" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.updateSchool()}"/> 
+                    </h:panelGrid> 
+                </p:fieldset>
             </h:form>  
         </div></h:body></html>

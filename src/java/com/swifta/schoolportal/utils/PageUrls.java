@@ -16,4 +16,5 @@ public class PageUrls {
     public static final int UPDATE_STUDENT_DATA = 1;
     public static final int UPDATE_ADMIN_DATA = 2;
     public static final int UPDATE_SCHOOL_DATA = 3;
+    public static final int UPDATE_PORTAL_ADMIN = 4;
 }

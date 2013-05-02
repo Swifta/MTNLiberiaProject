@@ -48,9 +48,50 @@ public class SchoolBean {
     private School school;
     private PaymentMode paymentMode;
     private PartnerService partnerService;
+    private PortalAdmin portalAdmin, selectedPortalAdmin;
+    private AdminRole adminRole;
     private Student student, selectedStudent;
     private StudentDataModel studentDataModel;
     private int studentId, activeIndex = 0;
+
+    public SchoolBean() {
+        admin = new SchoolAdmin();
+        school = new School();
+        student = new Student();
+        selectedStudent = new Student();
+        selectedAdmin = new SchoolAdmin();
+        selectedSchool = new School();
+        portalSession = new PortalSession();
+        studentDataModel = new StudentDataModel(getStudents());
+        portalAdmin = new PortalAdmin();
+        selectedPortalAdmin = new PortalAdmin();
+        adminRole = new AdminRole();
+        portalSession.getAppSession().setAttribute("portal_admin_school_id", 0);
+    }
+
+    public PortalAdmin getSelectedPortalAdmin() {
+        return selectedPortalAdmin;
+    }
+
+    public void setSelectedPortalAdmin(PortalAdmin selectedPortalAdmin) {
+        this.selectedPortalAdmin = selectedPortalAdmin;
+    }
+
+    public AdminRole getAdminRole() {
+        return adminRole;
+    }
+
+    public void setAdminRole(AdminRole adminRole) {
+        this.adminRole = adminRole;
+    }
+
+    public PortalAdmin getPortalAdmin() {
+        return portalAdmin;
+    }
+
+    public void setPortalAdmin(PortalAdmin portalAdmin) {
+        this.portalAdmin = portalAdmin;
+    }
 
     public int getActiveIndex() {
         return activeIndex;
@@ -81,6 +122,22 @@ public class SchoolBean {
         logger.info("-----------------------the portal session selected school Id is >>>>>>>>>>>>>>>>new value= " + newValue + " : old value= ");
     }
 
+    public void deletePortalAdmin(String portalAdminId) {
+    }
+
+    public void retrievePortalAdmin(String portalAdminId) throws IOException {
+        logger.info("its the admin id........................................////////////////////" + portalAdminId);
+        //  this.selectedStudent = new Student();
+        logger.info("its the admin .......................................////////////////////" + selectedPortalAdmin.toString());
+        try {
+            this.selectedPortalAdmin = adminDatabase.getAdminById(portalAdminId);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        logger.info("its after the student .......................................////////////////////" + selectedPortalAdmin.toString());
+        portalSession.redirect(PageUrls.UPDATE_PORTAL_ADMIN);
+    }
+
     public int getStudentId() {
         logger.info("-------------------student id >>>" + studentId);
         return studentId;
@@ -96,18 +153,6 @@ public class SchoolBean {
 
     public void setSchoolPayHistories(List<TransactionHistory> schoolPayHistories) {
         this.schoolPayHistories = schoolPayHistories;
-    }
-
-    public SchoolBean() {
-        admin = new SchoolAdmin();
-        school = new School();
-        student = new Student();
-        selectedStudent = new Student();
-        selectedAdmin = new SchoolAdmin();
-        selectedSchool = new School();
-        portalSession = new PortalSession();
-        studentDataModel = new StudentDataModel(getStudents());
-        portalSession.getAppSession().setAttribute("portal_admin_school_id", 0);
     }
 
     public SchoolAdmin getAdmin() {
@@ -286,6 +331,26 @@ public class SchoolBean {
         }
     }
 
+    public void createPortalAdmin() {
+        if (validate(portalAdmin)) {
+            try {
+                if (!adminDatabase.existingPortalAdmin(portalAdmin)) {
+                    if (!adminDatabase.createPortalAdmin(portalAdmin)) {
+                        logger.info("The admin role id is =======================================" + portalAdmin.getRoleId());
+                        showMessage("New Portal Admin created ... ");
+                        portalAdmin = new PortalAdmin();
+                    }
+                } else {
+                    showMessage("Existing portal admin found in the records ... ");
+                }
+            } catch (Exception ex) {
+                logger.error(ex);
+                portalAdmin = new PortalAdmin();
+                ex.printStackTrace();
+            }
+        }
+    }
+
     public void createSchool() {
         logger.info("Afer create school " + school.toString());
         if (validate(school)) {
@@ -296,6 +361,7 @@ public class SchoolBean {
                 school.setPaymentModeId("1");
                 if (!schoolDatabase.existingSchool(school)) {
                     if (!schoolDatabase.createSchool(school)) {
+                        logger.info("--------------------------------after creating school");
                         showMessage("New School created ... ");
                         school = new School();
                     }
@@ -358,10 +424,12 @@ public class SchoolBean {
         String tabId = event.getTab().getId();
         if (tabId.equalsIgnoreCase("stdreg")) {
             this.activeIndex = 0;
-        } else if (tabId.equalsIgnoreCase("regstd")) {
+        } else if (tabId.equalsIgnoreCase("manageportaladmin")) {
             this.activeIndex = 1;
-        } else if (tabId.equalsIgnoreCase("transhist")) {
+        } else if (tabId.equalsIgnoreCase("regstd")) {
             this.activeIndex = 2;
+        } else if (tabId.equalsIgnoreCase("transhist")) {
+            this.activeIndex = 3;
         } else if (tabId.equalsIgnoreCase("manageschool")) {
             this.activeIndex = 0;
         } else if (tabId.equalsIgnoreCase("manageadmin")) {
@@ -482,6 +550,23 @@ public class SchoolBean {
             }
         } else {
             showMessage("Name of student required ... ");
+            return false;
+        }
+    }
+
+    private boolean validate(PortalAdmin portalAdmin) {
+        logger.info("portal admin username not null....");
+        if (portalAdmin.getUsername() != null && portalAdmin.getUsername().length() > 0) {
+            logger.info("portal admin username valid....");
+            if (portalAdmin.getPassword() != null && portalAdmin.getPassword().length() > 0) {
+                logger.info("password is valid....");
+                return true;
+            } else {
+                showMessage("Password required...");
+                return false;
+            }
+        } else {
+            showMessage("Username of portal admin required ... ");
             return false;
         }
     }

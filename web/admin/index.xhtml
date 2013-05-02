@@ -27,6 +27,8 @@
             <ui:include src="/admin/school.xhtml"/>
         </c:if><c:if test="#{portalSession.appSession.getAttribute('pageid') == 2}">
             <ui:include src="/admin/schooladmin.xhtml"/>
+        </c:if>  <c:if test="#{portalSession.appSession.getAttribute('pageid') == 4}">
+            <ui:include src="/admin/portaladmin.xhtml"/>
         </c:if>       
     </h:body>
 </html>

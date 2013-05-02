@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import org.apache.log4j.Logger;
@@ -38,6 +39,15 @@ public class PortalAdminBean {
     private List<SchoolAdmin> admins;
     private List<PartnerService> partnerServices;
     private List<PaymentMode> paymentModes;
+
+    public String getEditable() {
+        return editable;
+    }
+
+    public void setEditable(String editable) {
+        this.editable = editable;
+    }
+    private String editable = "none";
 
     public PortalAdminBean() {
         portalAdmin = new PortalAdmin();
@@ -73,12 +83,12 @@ public class PortalAdminBean {
 
     public List<PartnerService> getPartnerServices() {
         try {
-           return new PartnerServiceDatabase().getAllPartnerServices();
+            return new PartnerServiceDatabase().getAllPartnerServices();
         } catch (SQLException ex) {
-         logger.error(ex);
-           ex.printStackTrace();
-        return new ArrayList<PartnerService>();
-         }
+            logger.error(ex);
+            ex.printStackTrace();
+            return new ArrayList<PartnerService>();
+        }
     }
 
     public void setPaymentModes(List<PaymentMode> paymentModes) {
@@ -86,11 +96,32 @@ public class PortalAdminBean {
     }
 
     public List<PaymentMode> getPaymentModes() {
-        
-         try { return new PaymentModeDatabase().getAllPaymentModes(); } catch
-         (SQLException ex) { logger.error(ex); ex.printStackTrace();
-        
-        return new ArrayList<PaymentMode>();
+
+        try {
+            return new PaymentModeDatabase().getAllPaymentModes();
+        } catch (SQLException ex) {
+            logger.error(ex);
+            ex.printStackTrace();
+
+            return new ArrayList<PaymentMode>();
+        }
+    }
+
+    public List<PortalAdmin> getPortalAdmins() {
+        try {
+            return adminDatabase.getAllPortalAdmins();
+        } catch (SQLException ex) {
+            logger.error(ex);
+            return new ArrayList<PortalAdmin>();
+        }
+    }
+
+    public List<AdminRole> getAdminRoles() {
+        try {
+            return adminDatabase.getAllAdminRoles();
+        } catch (SQLException ex) {
+            logger.error(ex);
+            return new ArrayList<AdminRole>();
         }
     }
 
@@ -107,6 +138,23 @@ public class PortalAdminBean {
         this.schools = schools;
     }
 
+    public void assignAdminRole(String username) {
+        String assignedRole = "";
+        try {
+            assignedRole = adminDatabase.getAdminRoleName(username);
+        } catch (SQLException ex) {
+            logger.error(ex);
+        }
+        if (assignedRole.isEmpty()) {
+            logger.info("The logged in user is not assigned a role ------------- default role assigned");
+            this.editable = "block";
+        } else if (assignedRole.equalsIgnoreCase("admin")) {
+            this.editable = "none";
+        } else if (assignedRole.equalsIgnoreCase("superadmin")) {
+            this.editable = "block";
+        }
+    }
+
     public void authenticate() {
         try {
             UserAuthentication auth = new UserAuthentication();
@@ -117,6 +165,7 @@ public class PortalAdminBean {
                 message = "";
                 logger.info("Admin authenticated ... ");
                 portalSession.redirect(PageUrls.ADMIN_MAIN);
+                assignAdminRole(portalAdmin.getUsername());
             } else {
                 logger.info("Invalid username and/or password");
                 message = "Invalid username and/or password";

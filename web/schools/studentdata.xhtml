@@ -6,9 +6,9 @@
             
             <h:form ><div style="align:right">
                     <p:commandButton styleClass="elevens bolds" value="Back to student details" action="#{schoolBean.redirectToRegisterStudents()}" /> 
-                </div><div style="align:center"><h:outputLabel value="Edit Student Information" styleClass="fifteens bolds centers"/>
-                </div><br /><br /><br/><br/> <h:outputLabel value="#{schoolBean.selectedStudent.schoolDetails}" style="margin-left:18em" styleClass="fifteens bolds"/><br/><br/>
-                <div>  <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
+                </div><p:fieldset legend="Edit Student Information" styleClass="fifteens bolds centers">  
+                    <h:outputLabel value="#{schoolBean.selectedStudent.schoolDetails}" style="margin-left:18em" styleClass="fifteens bolds"/><br/><br/>
+               <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
                         <h:outputLabel value="Student Name : "/>
                         <h:inputText value="#{schoolBean.selectedStudent.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required" validatorMessage="Validation Error: Ensure the student's name doesn't contain special characters, space and is between 4 to 50-character lenght">
                         <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
@@ -23,6 +23,6 @@
                                              style="color : #fff;" actionListener="#{schoolBean.updateStudent()}"/> 
                         </h:column>
                     </h:panelGrid> 
-                </div>
+                </p:fieldset>
             </h:form>  
         </div></h:body></html>

@@ -4,13 +4,15 @@
  */
 package com.swifta.schoolportal.dblogic;
 
-import com.swifta.schoolportal.entities.PaymentMode;
+import com.swifta.schoolportal.entities.AdminRole;
+import com.swifta.schoolportal.entities.PortalAdmin;
 import com.swifta.schoolportal.entities.School;
 import com.swifta.schoolportal.entities.SchoolAdmin;
 import com.swifta.schoolportal.utils.PortalDatabase;
 import com.swifta.schoolportal.utils.SendUserPin;
 import com.swifta.schoolportal.utils.UsernameGenerator;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,6 +28,54 @@ public class PortalAdminDatabase {
 
     private Logger logger = Logger.getLogger(PortalAdminDatabase.class);
 
+    public List<AdminRole> getAllAdminRoles() throws SQLException {
+        String query = "select * from adminrole";
+
+        logger.info("Query : " + query);
+        ArrayList<AdminRole> adminRoles = new ArrayList<AdminRole>();
+        JDCConnection con = PortalDatabase.source.getConnection();
+        ResultSet res = con.createStatement().executeQuery(query);
+        AdminRole adminRole = null;
+        while (res.next()) {
+            adminRole = new AdminRole();
+
+            adminRole.setDescription(res.getString("description"));
+            adminRole.setName(res.getString("name"));
+            adminRole.setId(res.getInt("id"));
+            adminRoles.add(adminRole);
+        }
+        //con.close();
+        PortalDatabase.source.returnConnection(con);
+        return adminRoles;
+    }
+
+    public List<PortalAdmin> getAllPortalAdmins() throws SQLException {
+        String query = "select * from admins";
+
+        logger.info("Query : " + query);
+        ArrayList<PortalAdmin> portalAdmins = new ArrayList<PortalAdmin>();
+        JDCConnection con = PortalDatabase.source.getConnection();
+        ResultSet res = con.createStatement().executeQuery(query);
+        PortalAdmin portalAdmin = null;
+        while (res.next()) {
+            logger.info("------------------------looping admins");
+
+            portalAdmin = new PortalAdmin();
+
+            portalAdmin.setDateCreated(res.getString("datecreated"));
+            portalAdmin.setUsername(res.getString("username"));
+            portalAdmin.setId(res.getInt("id"));
+            portalAdmin.setRoleName(this.getAdminRoleName(portalAdmin.getUsername()));
+            portalAdmin.setPassword(res.getString("password"));
+
+
+            portalAdmins.add(portalAdmin);
+        }
+        //con.close();
+        PortalDatabase.source.returnConnection(con);
+        return portalAdmins;
+    }
+
     public List<School> getAllSchools() throws SQLException {
         String query = "select * from Partner_Service_Unit";
 
@@ -34,8 +84,9 @@ public class PortalAdminDatabase {
         ArrayList<School> schools = new ArrayList<School>();
         JDCConnection con = PortalDatabase.source.getConnection();
         ResultSet res = con.createStatement().executeQuery(query);
+        School school = null;
         while (res.next()) {
-            School school = new School();
+            school = new School();
 
             school.setName(res.getString("name"));
             school.setId(res.getInt("id"));
@@ -73,6 +124,65 @@ public class PortalAdminDatabase {
         return ex;
     }
 
+    public boolean createPortalAdmin(PortalAdmin admin) throws SQLException, IOException, JSONException {
+         int portalAdminId = getLastID("admins") + 1;
+        String sqlQuery = "insert into admins values (" + portalAdminId + ",'" + admin.getUsername() + "','" + admin.getPassword() + "',now())";
+        logger.info("Query : " + sqlQuery);
+        JDCConnection connection = PortalDatabase.source.getConnection();
+        boolean ex = connection.createStatement().execute(sqlQuery);
+        PortalDatabase.source.returnConnection(connection);
+        createAdminRoles(admin.getRoleId(), portalAdminId);
+        return ex;
+    }
+
+    public void createAdminRoles(String adminRoleId, int portalAdminId) throws SQLException {
+        String sqlQuery = "insert into admin_adminrole(id,admins_id,adminrole_id) values (" + (getLastID("admin_adminrole") + 1) + ",'" + portalAdminId+ "','" + adminRoleId + "')";
+        logger.info("Query : " + sqlQuery);
+        JDCConnection connection = PortalDatabase.source.getConnection();
+        connection.createStatement().execute(sqlQuery);
+        PortalDatabase.source.returnConnection(connection);
+
+    }
+
+    public AdminRole getRoleByName(String roleName) throws SQLException {
+        String sqlQuery = "select * from adminrole where name = ?";
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, roleName);
+        ResultSet res = prepStmt.executeQuery();
+        res.next();
+        AdminRole adminRole = new AdminRole();
+        while (res.next()) {
+            adminRole.setDescription(res.getString("description"));
+            adminRole.setName(res.getString("name"));
+            adminRole.setId(res.getInt("id"));
+        }
+        logger.info("role Name : " + adminRole.getName());
+        //connection.close();
+        PortalDatabase.source.returnConnection(con);
+        return adminRole;
+    }
+     public PortalAdmin getAdminById(String portalAdminId) throws SQLException {
+        String sqlQuery = "select * from admins where id = ?";
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, portalAdminId);
+        ResultSet res = prepStmt.executeQuery();
+        res.next();
+        PortalAdmin portalAdmin = new PortalAdmin();
+        while (res.next()) {
+            portalAdmin.setUsername(res.getString("username"));
+            portalAdmin.setPassword(res.getString("password"));
+            portalAdmin.setId(res.getInt("id"));
+            portalAdmin.setDateCreated(res.getString("datecreated"));
+        }
+        logger.info("role Name : " + portalAdmin.getUsername());
+        //connection.close();
+        PortalDatabase.source.returnConnection(con);
+        return portalAdmin;
+    }
+
+   
     public boolean updateAdmin(SchoolAdmin schoolAdmin) throws SQLException, IOException, JSONException {
         String sqlQuery = "update schooladmins  set emailaddress = '" + schoolAdmin.getEmailAddress() + "', firstname ='" + schoolAdmin.getFirstName() + "', "
                 + "lastname = '" + schoolAdmin.getLastName() + "', mobile ='" + schoolAdmin.getPhoneNo() + "',"
@@ -88,6 +198,19 @@ public class PortalAdminDatabase {
 
     public boolean existingSchoolAdmin(SchoolAdmin admin) throws SQLException {
         String sqlQuery = "select * from schooladmins where mobile = '" + admin.getPhoneNo() + "'";
+        JDCConnection connection = PortalDatabase.source.getConnection();
+        ResultSet res = connection.createStatement().executeQuery(sqlQuery);
+        boolean ex = res.next();
+
+        PortalDatabase.source.returnConnection(connection);
+
+        //connection.close();
+        return ex;
+    }
+
+    public boolean existingPortalAdmin(PortalAdmin portalAdmin) throws SQLException {
+        logger.info("existing portal admin ------------------");
+        String sqlQuery = "select * from admins where username = '" + portalAdmin.getUsername() + "' and datecreated = '" + portalAdmin.getDateCreated() + "'";
         JDCConnection connection = PortalDatabase.source.getConnection();
         ResultSet res = connection.createStatement().executeQuery(sqlQuery);
         boolean ex = res.next();
@@ -148,10 +271,30 @@ public class PortalAdminDatabase {
             sch.setSchoolCode(res.getString("school_code"));
             sch.setId(res.getInt("id"));
         }
-        logger.info("School Name : " + sch.getName()+ ">>>>"+sqlQuery);
+        logger.info("School Name : " + sch.getName() + ">>>>" + sqlQuery);
         //connection.close();
         PortalDatabase.source.returnConnection(connection);
         return sch;
+    }
+
+    public String getAdminRoleName(String username) throws SQLException {
+        String sqlQuery = "select ar.name from adminrole ar, admins a,admin_adminrole aar where a.username = ? and aar.adminrole_id = ar.id and aar.admins_id = a.id";
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setString(1, username);
+        ResultSet res = prepStmt.executeQuery();
+        String roleName = "N/A";
+        while (res.next()) {
+            Object retrievedRole = res.getString("name");
+            if (retrievedRole != null) {
+                roleName = (String) retrievedRole;
+                logger.info(roleName + "----------------the role name");
+            }
+        }
+        //connection.close();
+        PortalDatabase.source.returnConnection(con);
+        return roleName;
     }
 
     public SchoolAdmin getSchoolAdminDetails(int schoolAdminId) throws SQLException {

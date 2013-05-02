@@ -6,8 +6,7 @@
             <h:form >
                 <div style="align:right">
                     <p:commandButton styleClass="elevens bolds" value="Back to school admin details" action="#{schoolBean.redirectToManageAdmins()}" /> 
-                </div><div style="align:center"><h:outputLabel value="Edit School Admin Information" styleClass="fifteens bolds centers"/>
-                </div><br /><br /><br/><br /><br />
+                </div><p:fieldset legend="Edit School Admin Information" styleClass="fifteens bolds centers">  
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
                                 <h:outputLabel value="School"/><h:outputLabel styleClass="fifteens bolds" value="#{schoolBean.selectedAdmin.schoolName}"/>
                                 <h:outputLabel value="First Name : "/>
@@ -29,5 +28,6 @@
                                 <h:outputLabel value=""/>
                                 <h:commandButton value="Update Admin" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{schoolBean.updateSchoolAdmin()}"/> 
                             </h:panelGrid> 
+                </p:fieldset>
             </h:form>  
         </div></h:body></html>
