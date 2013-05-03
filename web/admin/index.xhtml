@@ -20,8 +20,7 @@
         </div>        
         <c:if test="#{portalSession.appSession.getAttribute('pageid') == 0}">
             <ui:include src="/admin/login.xhtml"/>
-        </c:if>
-        <c:if test="#{portalSession.appSession.getAttribute('pageid') == 99}">
+        </c:if><c:if test="#{portalSession.appSession.getAttribute('pageid') == 99}">
             <ui:include src="/admin/main.xhtml"/>
         </c:if> <c:if test="#{portalSession.appSession.getAttribute('pageid') == 3}">
             <ui:include src="/admin/school.xhtml"/>

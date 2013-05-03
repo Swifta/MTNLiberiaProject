@@ -18,12 +18,12 @@
                         <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
                             <h:outputLabel value="Student Name : "/>
                             <h:inputText value="#{schoolBean.student.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required" validatorMessage="Validation Error: Ensure the student's name doesn't contain special characters and is between 4 to 50-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
-                    </h:inputText>
+                                <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                            </h:inputText>
                             <h:outputLabel value="Registration Number: "/>
                             <h:inputText value="#{schoolBean.student.identNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required" validatorMessage="Validation Error: Ensure the student registration number doesn't contain special characters, space and is between 2 to 10-character lenght">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,10}$" />
-                    </h:inputText>
+                                <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,10}$" />
+                            </h:inputText>
                             <h:outputLabel value=""/> 
                             <h:column>
                                 <h:commandButton value="Create Student" styleClass="buttons elevens whites bolds padded" 
@@ -54,8 +54,8 @@
                             </p:column>       
 
                             <p:column style="width:100%" >  
-                                <p:commandLink value="Edit" action="#{schoolBean.retrieveStudent(student.id)}"> 
-                                </p:commandLink>  
+                                <p:commandLink action="#{schoolBean.retrieveStudent(student.id)}"> 
+                                    <h:graphicImage  value="../images/edit.png" /> </p:commandLink>  
                             </p:column> 
 
                         </p:dataTable> 

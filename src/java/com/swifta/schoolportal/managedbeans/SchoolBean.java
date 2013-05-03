@@ -5,6 +5,7 @@
 package com.swifta.schoolportal.managedbeans;
 
 import com.swifta.schoolportal.datamodel.StudentDataModel;
+import com.swifta.schoolportal.dblogic.AuditTrailDatabase;
 import com.swifta.schoolportal.dblogic.PortalAdminDatabase;
 import com.swifta.schoolportal.dblogic.SchoolDatabase;
 import com.swifta.schoolportal.dblogic.StudentDatabase;
@@ -20,8 +21,6 @@ import javax.faces.bean.SessionScoped;
 import org.apache.log4j.Logger;
 //import org.primefaces.event.CellEditEvent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import org.primefaces.event.TabChangeEvent;
 
 /**
@@ -42,6 +41,7 @@ public class SchoolBean {
     private Logger logger = Logger.getLogger(SchoolBean.class);
     private List<Student> students;
     private List<TransactionHistory> histories, schoolPayHistories;
+    private List<AuditTrail> auditTrails;
     private School selectedSchool;
     private SchoolAdmin selectedAdmin;
     private PortalSession portalSession;
@@ -123,6 +123,15 @@ public class SchoolBean {
     }
 
     public void deletePortalAdmin(String portalAdminId) {
+        try {
+            adminDatabase.deleteAdminRole(portalAdminId);
+            adminDatabase.deletePortalAdmin(portalAdminId);
+            showMessage("Portal admin deleted successfully");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        logger.info("---------------------------display this message");
+        showMessage("Portal admin deleted successfully");
     }
 
     public void retrievePortalAdmin(String portalAdminId) throws IOException {
@@ -134,7 +143,7 @@ public class SchoolBean {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        logger.info("its after the student .......................................////////////////////" + selectedPortalAdmin.toString());
+        logger.info("its after the portal admin .......................................////////////////////" + selectedPortalAdmin.toString());
         portalSession.redirect(PageUrls.UPDATE_PORTAL_ADMIN);
     }
 
@@ -299,6 +308,21 @@ public class SchoolBean {
         }
     }
 
+    public List<String> getAuditTrailActions() {
+        return new ArrayList<String>();
+    }
+
+    public List<AuditTrail> getAuditTrails() {
+        String actionPerformed = null, description = null, originatorName = null, dateFrom = null, dateTo = null;
+        try {
+            return new AuditTrailDatabase().getAuditTrails(actionPerformed, description, originatorName, dateFrom, dateTo);
+        } catch (SQLException ex) {
+            logger.error(ex);
+            ex.printStackTrace();
+            return auditTrails;
+        }
+    }
+
     public void setHistories(List<TransactionHistory> histories) {
         this.histories = histories;
     }
@@ -430,11 +454,32 @@ public class SchoolBean {
             this.activeIndex = 2;
         } else if (tabId.equalsIgnoreCase("transhist")) {
             this.activeIndex = 3;
+        } else if (tabId.equalsIgnoreCase("audittrail")) {
+            this.activeIndex = 4;
         } else if (tabId.equalsIgnoreCase("manageschool")) {
             this.activeIndex = 0;
         } else if (tabId.equalsIgnoreCase("manageadmin")) {
-            this.activeIndex = 1;
+            this.activeIndex = 2;
         }
+    }
+
+    public void updatePortalAdmin() {
+        if (validate(selectedPortalAdmin)) {
+            logger.info("after validation");
+            try {
+                if (!adminDatabase.existingPortalAdmin(selectedPortalAdmin)) {
+                    if (!adminDatabase.updatePortalAdmin(selectedPortalAdmin)) {
+                        showMessage("admin data updated ... ");
+                    }
+                } else {
+                    showMessage("Existing admin found in the records; confirm that the code or name doesn't exit... ");
+                }
+            } catch (Exception ex) {
+                logger.error(ex);
+                ex.printStackTrace();
+            }
+        }
+        logger.info("validation failed....");
     }
 
     public void updateSchool() {

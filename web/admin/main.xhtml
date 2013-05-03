@@ -56,9 +56,9 @@
                             </p:column>
                             <p:column headerText="Partner Service" sortBy="#{schools.partnerServiceName}">
                                 <h:outputLabel value="#{schools.partnerServiceName}"/>
-                            </p:column>  --><p:column style="width:5%" >  
-                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchool(schools.id)}" style="width:5%; display:#{portalAdminBean.editable};"> 
-                                </p:commandLink>  
+                            </p:column>  --><p:column style="width:100%" >  
+                                <p:commandLink action="#{schoolBean.retrieveSchool(schools.id)}" style="width:5%; display:#{portalAdminBean.editable};"> <h:graphicImage value="../images/edit.png" />
+                                    <h:graphicImage  value="../images/edit.png" /></p:commandLink>  
                             </p:column>                   
                         </p:dataTable></h:form></p:tab>
                 <p:tab title="Manage Portal Admins" id="manageportaladmin">
@@ -92,7 +92,7 @@
                         </h:form>
                     </div>
                     <br />
-                    <h:form> <p:dataTable paginator="true" rows="20"  
+                    <h:form> <p:dataTable paginator="true" rows="20" id="adminList"
                                           paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                                           rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.portalAdmins}" var="portalAdmins">
                             <f:facet name="header">List of Portal Admins</f:facet>
@@ -101,11 +101,15 @@
                             </p:column><p:column headerText="Admin Role" sortBy="#{portalAdmins.roleName}">
                                 <h:outputLabel value="#{portalAdmins.roleName}"/>
                             </p:column>
-                            <p:column style="width:5%" >  
-                                <p:commandLink value="Edit" action="#{schoolBean.retrievePortalAdmin(portalAdmins.id)}" style="display:#{portalAdminBean.editable}"> 
-                                </p:commandLink> 
-                                <p:commandLink value="Delete" action="#{schoolBean.deletePortalAdmin(portalAdmins.id)}" style="display:#{portalAdminBean.editable}"> 
-                                </p:commandLink> 
+                            <p:column style="width:100%" >  
+                                <h:panelGrid styleClass="elevens companyHeaderGrid" columns="5">
+                                    <p:commandLink action="#{schoolBean.retrievePortalAdmin(portalAdmins.id)}" style="display:#{portalAdminBean.editable}"> 
+                                        <h:graphicImage  value="../images/edit.png" /> </p:commandLink> 
+                                    <h:outputLabel value="|" style="width:100%" />
+                                    <p:commandLink action="#{schoolBean.deletePortalAdmin(portalAdmins.id)}" update="adminList" ajax="true" style="display:#{portalAdminBean.editable}"> 
+                                        <h:graphicImage  value="../images/delete.png" />
+                                    </p:commandLink>
+                                </h:panelGrid>
                             </p:column>                   
                         </p:dataTable></h:form></p:tab>
                 <p:tab title="Manage School Admin" id="manageadmin">
@@ -169,9 +173,9 @@
                             <p:column headerText="Name of School" sortBy="#{admin.schoolName}">
                                 <h:outputLabel value="#{admin.schoolName}"/>
                             </p:column>  
-                            <p:column style="width:5%" >  
-                                <p:commandLink value="Edit" action="#{schoolBean.retrieveSchoolAdmin(admin.id)}" style="display:#{portalAdminBean.editable}"> 
-                                </p:commandLink>  
+                            <p:column style="width:100%" >  
+                                <p:commandLink action="#{schoolBean.retrieveSchoolAdmin(admin.id)}" style="display:#{portalAdminBean.editable}"> 
+                                    <h:graphicImage  value="../images/edit.png" /> </p:commandLink>  
                             </p:column>         
                         </p:dataTable>
                     </h:form>
@@ -213,6 +217,41 @@
                             </p:column>                        
                         </p:dataTable>                    
                         <p:poll interval="5" listener="#{schoolBean.getHistories()}" update="txnHistory" /></h:form>
+                </p:tab>      
+                <p:tab title="Audit Trail" id="audittrail">       
+                    <div style="text-align: right;padding: 5px;" class="elevens">
+                        <h:form>
+                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                        </h:form>
+                    </div>
+                    <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value="Select an the search parameters and wait for the audit trail to load"/>
+                            <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
+                                <p:ajax listener="#{schoolBean.retrieveSelectedSchool(schoolBean.admin.schoolID)}" event="valueChange"/>
+                                <f:selectItem itemLabel="Select an action"/>
+                                <f:selectItems value="#{portalAdminBean.auditTrailActions}" var="auditActions" itemLabel="#{auditActions.name}" itemValue="#{auditActions.id}"/> 
+                            </h:selectOneMenu></h:panelGrid>
+                        <p:dataTable paginator="true" rows="20"  
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.auditTrails}" var="auditTrail" id="audittrails">
+                            <f:facet name="header">Audit Trail</f:facet>
+                            <p:column headerText="Originator Name">
+                                <h:outputLabel value="#{auditTrail.originatorName}"/>
+                            </p:column>
+                            <p:column headerText="Action Performed">
+                                <h:outputLabel value="#{auditTrail.actionPerformed}"/>
+                            </p:column>                        
+                            <p:column headerText="Description">
+                                <h:outputLabel value="#{auditTrail.description}"/>
+                            </p:column>                        
+                            <p:column headerText="Originating IP Address">
+                                <h:outputLabel value="#{auditTrail.originatorIpAddress}"/>
+                            </p:column>                        
+                              <p:column headerText="Date">
+                                <h:outputLabel value="#{auditTrail.dateCreated}"/>
+                            </p:column>                        
+                        </p:dataTable>                    
+                        <p:poll interval="5" listener="#{schoolBean.getAuditTrails()}" update="audittrails" /></h:form>
                 </p:tab>      
             </p:tabView>
         </div>

@@ -103,7 +103,9 @@ padding: 1.2em !important;
 .centers{
     text-align: center;
 }
-
+.companyHeaderGrid tr, .companyHeaderGrid td {
+    border-style: hidden !important;
+}
 .nonunderlined{
     text-decoration: none;
 }
