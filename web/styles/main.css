@@ -96,6 +96,10 @@ padding: 1.2em !important;
     background-repeat: repeat-x;
 }
 
+.evenspacing{
+   border-spacing:0;
+  border-collapse:collapse;
+}
 .thirteens{
     font-size : 13px;
 }

@@ -5,6 +5,7 @@
 package com.swifta.schoolportal.utils;
 
 import com.swifta.schoolportal.dblogic.JDCConnection;
+import com.swifta.schoolportal.entities.PortalAdmin;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,15 +17,15 @@ import org.apache.log4j.Logger;
  * @author Opeyemi
  */
 public class UserAuthentication {
-
+    
     private Logger logger = Logger.getLogger(UserAuthentication.class);
-
+    
     public UserAuthentication() {
     }
-
-    public boolean authenticateAdmin(String username, String password) throws IOException, SQLException {
+    
+    public PortalAdmin authenticateAdmin(String username, String password) throws IOException, SQLException {
         String sqlQuery = "select * from admins where username = ? and password= ?";
-
+        
         logger.info(sqlQuery);
         JDCConnection con = PortalDatabase.source.getConnection();
         PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
@@ -32,9 +33,17 @@ public class UserAuthentication {
         prepStmt.setString(2, password);
         ResultSet res = prepStmt.executeQuery();
         PortalDatabase.source.returnConnection(con);
-        return res.next();
+        
+        PortalAdmin portalAdmin = null;
+        while (res.next()) {
+            portalAdmin = new PortalAdmin();
+            portalAdmin.setUsername(res.getString("username"));
+            portalAdmin.setId(res.getInt("id"));
+        }
+        
+        return portalAdmin;
     }
-
+    
     public String getFilePath() {
         logger.info("Getting properties file path ... ");
         String fileName = "";

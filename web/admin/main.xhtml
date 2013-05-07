@@ -57,7 +57,7 @@
                             <p:column headerText="Partner Service" sortBy="#{schools.partnerServiceName}">
                                 <h:outputLabel value="#{schools.partnerServiceName}"/>
                             </p:column>  --><p:column style="width:100%" >  
-                                <p:commandLink action="#{schoolBean.retrieveSchool(schools.id)}" style="width:5%; display:#{portalAdminBean.editable};"> <h:graphicImage value="../images/edit.png" />
+                                <p:commandLink action="#{schoolBean.retrieveSchool(schools.id)}" style="width:5%; display:#{portalAdminBean.editable};">
                                     <h:graphicImage  value="../images/edit.png" /></p:commandLink>  
                             </p:column>                   
                         </p:dataTable></h:form></p:tab>
@@ -225,12 +225,35 @@
                         </h:form>
                     </div>
                     <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
-                            <h:outputLabel value="Select an the search parameters and wait for the audit trail to load"/>
-                            <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
-                                <p:ajax listener="#{schoolBean.retrieveSelectedSchool(schoolBean.admin.schoolID)}" event="valueChange"/>
-                                <f:selectItem itemLabel="Select an action"/>
-                                <f:selectItems value="#{portalAdminBean.auditTrailActions}" var="auditActions" itemLabel="#{auditActions.name}" itemValue="#{auditActions.id}"/> 
-                            </h:selectOneMenu></h:panelGrid>
+                            <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> <h:outputLabel value="From:"/>
+                                <p:calendar value="#{schoolBean.firstDate}" id="fromDate" pattern="yyyy-MM-dd" /> 
+                            </h:panelGrid><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                                <h:outputLabel value="To:"/>
+                                <p:calendar value="#{schoolBean.secondDate}" id="toDate" pattern="yyyy-MM-dd"/> 
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                            <p:fieldset legend="Group" styleClass="fifteens bolds centers">
+                                <p:selectManyCheckbox value="#{schoolBean.selectedActionTypes}">  
+                                    <f:selectItem itemLabel="School Admin" itemValue="SchoolAdmin" />  
+                                    <f:selectItem itemLabel="Admin" itemValue="Admin" />  
+                                </p:selectManyCheckbox> </p:fieldset>
+                            <p:fieldset legend="Actions" styleClass="fifteens bolds centers evenspacing"> <p:selectManyCheckbox  value="#{schoolBean.selectedActionsPerformed}">  
+                                    <f:selectItem itemLabel="Create" itemValue="Create" />  
+                                    <f:selectItem itemLabel="Update" itemValue="Update" />  
+                                    <f:selectItem itemLabel="Delete" itemValue="Delete" />    
+                                </p:selectManyCheckbox> 
+                            </p:fieldset>
+                            <br/>
+                            <br/>
+                            <div style="text-align: right;padding: 5px;" class="elevens">
+                                <h:form>
+                                    <p:commandButton value="Search" styleClass="elevens bolds" action="#{schoolBean.retrieveAuditTrail()}" ajax="false"/>
+                                </h:form>
+                            </div>
+                        </h:panelGrid>
+                        <br/>
                         <p:dataTable paginator="true" rows="20"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                                      rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.auditTrails}" var="auditTrail" id="audittrails">
@@ -247,14 +270,13 @@
                             <p:column headerText="Originating IP Address">
                                 <h:outputLabel value="#{auditTrail.originatorIpAddress}"/>
                             </p:column>                        
-                              <p:column headerText="Date">
+                            <p:column headerText="Date">
                                 <h:outputLabel value="#{auditTrail.dateCreated}"/>
                             </p:column>                        
                         </p:dataTable>                    
-                        <p:poll interval="5" listener="#{schoolBean.getAuditTrails()}" update="audittrails" /></h:form>
+                       </h:form>
                 </p:tab>      
             </p:tabView>
         </div>
     </h:body>
 </html>
-

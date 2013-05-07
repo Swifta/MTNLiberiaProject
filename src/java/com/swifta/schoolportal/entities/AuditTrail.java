@@ -10,8 +10,24 @@ package com.swifta.schoolportal.entities;
  */
 public class AuditTrail {
 
-    private int id = 0,originatorId=0;
-    private String originatorName, actionPerformed, dateCreated, description, originatorIpAddress;
+    private int id = 0,originatorId=0,originatorSchoolAdminId=0;
+    private String originatorName, actionPerformed, dateCreated, description, originatorIpAddress,originatorType;
+
+    public int getOriginatorSchoolAdminId() {
+        return originatorSchoolAdminId;
+    }
+
+    public void setOriginatorSchoolAdminId(int originatorSchoolAdminId) {
+        this.originatorSchoolAdminId = originatorSchoolAdminId;
+    }
+
+    public String getOriginatorType() {
+        return originatorType;
+    }
+
+    public void setOriginatorType(String originatorType) {
+        this.originatorType = originatorType;
+    }
 
     public int getOriginatorId() {
         return originatorId;

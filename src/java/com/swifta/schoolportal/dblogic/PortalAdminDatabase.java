@@ -137,7 +137,7 @@ public class PortalAdminDatabase {
         //send sms to user
         logger.info("Sending username to " + admin.getFirstName() + ", " + admin.getLastName());
         SendUserPin send = new SendUserPin();
-        send.sendMessage("Your username for the school portal is " + username, admin.getPhoneNo());
+//       send.sendMessage("Your username for the school portal is " + username, admin.getPhoneNo());
 
         return ex;
     }

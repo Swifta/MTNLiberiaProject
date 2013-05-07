@@ -12,7 +12,7 @@
                 </h:form>
             </div>            
             <p:tabView styleClass="elevens bolds" dynamic="true" activeIndex="#{schoolBean.activeIndex}">
-                <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}" update=":form:growl"/>  
+                <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}"/>  
                 <p:tab title="Register Students" id="stdreg">
                     <h:form>
                         <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
@@ -55,14 +55,14 @@
 
                             <p:column style="width:100%" >  
                                 <p:commandLink action="#{schoolBean.retrieveStudent(student.id)}"> 
-                                    <h:graphicImage  value="../images/edit.png" /> </p:commandLink>  
+                                   <h:graphicImage  value="/images/edit.png" /> </p:commandLink>  
                             </p:column> 
 
                         </p:dataTable> 
                     </h:form>
 
                 </p:tab>
-                <p:tab title="Transaction History" id="transhist">                   
+                <p:tab title="Transaction History" id="tranxhist">                   
                     <h:form>
                         <p:dataTable paginator="true" rows="20"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  

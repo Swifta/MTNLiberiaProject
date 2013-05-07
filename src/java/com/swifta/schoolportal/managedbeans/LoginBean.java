@@ -78,7 +78,7 @@ public class LoginBean {
                 String pin = new UsernameGenerator().generatePin(AppValues.pinLength);
 
                 logger.info("PIN : " + pin);
-              // boolean sent = msg.sendPin(pin, new MsisdnValidator().transform(admin.getPhoneNo()));
+                // boolean sent = msg.sendPin(pin, new MsisdnValidator().transform(admin.getPhoneNo()));
                 boolean sent = true;
                 if (sent) {
                     timeSent = System.currentTimeMillis();
@@ -99,10 +99,13 @@ public class LoginBean {
     }
 
     public void validatePin() {
-        logger.info("Validating pin "+password);
+        logger.info("Validating pin " + password);
         if (password.length() > 0) {
             if (password.equals(pinSent)) {
                 try {
+                    portalSession.getAppSession().setAttribute("logged_in_portal_admin", null);
+                    portalSession.getAppSession().setAttribute("logged_in_school_admin", admin);
+
                     portalSession.getAppSession().setAttribute("portal_admin_school", admin.getSchoolName());
                     portalSession.getAppSession().setAttribute("portal_admin_school_id", admin.getSchoolID());
                     portalSession.getAppSession().setAttribute("portal_admin_email", admin.getEmailAddress());

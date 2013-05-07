@@ -158,14 +158,18 @@ public class PortalAdminBean {
     public void authenticate() {
         try {
             UserAuthentication auth = new UserAuthentication();
+            PortalAdmin admin = null;
             logger.info("Authenticating ... ");
             logger.info("Username : " + portalAdmin.getUsername());
             logger.info("Password : " + portalAdmin.getPassword());
-            if (auth.authenticateAdmin(portalAdmin.getUsername(), portalAdmin.getPassword())) {
+            portalSession.getAppSession().setAttribute("logged_in_portal_admin", admin);
+            portalSession.getAppSession().setAttribute("logged_in_school_admin", null);
+            if ((admin = auth.authenticateAdmin(portalAdmin.getUsername(), portalAdmin.getPassword())) != null) {
                 message = "";
                 logger.info("Admin authenticated ... ");
                 portalSession.redirect(PageUrls.ADMIN_MAIN);
                 assignAdminRole(portalAdmin.getUsername());
+                portalSession.getAppSession().setAttribute("logged_in_portal_admin", admin);
             } else {
                 logger.info("Invalid username and/or password");
                 message = "Invalid username and/or password";

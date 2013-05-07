@@ -45,6 +45,7 @@ public class SchoolDatabase {
 
             admin = new SchoolAdmin();
 
+            admin.setId(res.getInt("id"));
             admin.setEmailAddress(res.getString("emailaddress"));
             admin.setFirstName(res.getString("firstname"));
             admin.setLastName(res.getString("lastname"));
