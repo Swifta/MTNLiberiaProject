@@ -13,9 +13,6 @@ import javax.faces.model.ListDataModel;
 import org.apache.log4j.Logger;
 import org.primefaces.model.SelectableDataModel;
 import java.sql.SQLException;
-import javax.faces.context.FacesContext;
-import javax.el.ELContext;
-import javax.el.ValueExpression;
 
 /**
  *

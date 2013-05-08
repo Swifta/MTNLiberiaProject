@@ -11,6 +11,24 @@ package com.swifta.schoolportal.entities;
 public class TransactionHistory {
 
     private String studentName,amountPaid,paidBy,paymentRef,transactionID,date;
+    private boolean redeemed = false;
+    private int id = 0;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isRedeemed() {
+        return redeemed;
+    }
+
+    public void setRedeemed(boolean redeemed) {
+        this.redeemed = redeemed;
+    }
     
     public TransactionHistory() {
         

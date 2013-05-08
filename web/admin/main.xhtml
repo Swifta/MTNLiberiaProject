@@ -1,9 +1,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"  xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:body>
         <p:growl rendered="true"/>
 
         <div id="canvas">
+            <div style="text-align: right;padding: 5px;" class="elevens">
+                <h:form>
+                    <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                </h:form>
+            </div>
             <p:tabView styleClass="elevens bolds" dynamic="true" activeIndex="#{schoolBean.activeIndex}">
                 <p:ajax event="tabChange" listener="#{schoolBean.onTabChange}"/>   
                 <p:tab title="Manage Schools" id="manageschool">
@@ -38,7 +43,6 @@
                         <h:form>
                             <p:commandButton value="Add School" styleClass="elevens bolds" onclick="school.show();" style="display:#{portalAdminBean.editable}"/>
                             <p:spacer width="20"/>
-                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
                         </h:form>
                     </div>
                     <br />
@@ -88,7 +92,6 @@
                         <h:form>
                             <p:commandButton value="Add Portal Admin" styleClass="elevens bolds" onclick="portalAdmin.show();" style="display:#{portalAdminBean.editable}"/>
                             <p:spacer width="20"/>
-                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
                         </h:form>
                     </div>
                     <br />
@@ -146,7 +149,6 @@
                         <h:form>
                             <p:commandButton value="Create School Admin" styleClass="elevens bolds" onclick="admin.show();" style="display:#{portalAdminBean.editable}"/>
                             <p:spacer width="20"/>
-                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
                         </h:form>
                     </div>
                     <br />
@@ -180,23 +182,42 @@
                         </p:dataTable>
                     </h:form>
                 </p:tab>
-                <p:tab title="Transaction History" id="transhist">       
-                    <div style="text-align: right;padding: 5px;" class="elevens">
-                        <h:form>
-                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
-                        </h:form>
-                    </div>
-                    <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                <p:tab title="Transaction History" id="transhist"> 
+                    <h:form>
+                        <div style="text-align: center;padding: 5px;" class="elevens"> 
+                            <h:outputLabel value="#{schoolBean.subTotal}" />
+                        </div>             
+
+
+                        <h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
                             <h:outputLabel value="Select a school and wait for transactions to reload"/>
                             <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
                                 <p:ajax listener="#{schoolBean.retrieveSelectedSchool(schoolBean.admin.schoolID)}" event="valueChange"/>
                                 <f:selectItem itemLabel="Select a school"/>
                                 <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
-                            </h:selectOneMenu></h:panelGrid>
-                        <p:dataTable paginator="true" rows="20"  
-                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
+                            </h:selectOneMenu><h:outputLabel value=""/><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> <h:outputLabel value="From:"/>
+                                <p:calendar value="#{schoolBean.firstDate}" id="fromDate" pattern="yyyy-MM-dd" /> 
+                            </h:panelGrid><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                                <h:outputLabel value="To:"/>
+                                <p:calendar value="#{schoolBean.secondDate}" id="toDate" pattern="yyyy-MM-dd"/> 
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{schoolBean.getTransacionHistoryModel()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <div style="text-align: right;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Redeem" styleClass="elevens bolds" actionListener="#{schoolBean.redeemSelectedTransactions()}" ajax="false" style="display:#{portalAdminBean.editable}"/>
+                            <p:commandButton value="Export To Excel" styleClass="elevens bolds" action="#{portalAdminBean.exportToExcel()}" ajax="false">
+                                <h:graphicImage  value="../images/excel_icon.gif" /> </p:commandButton>
+
+                        </div>
+                        <p:dataTable rows="20" paginator="true" selectionMode="" selection="#{schoolBean.selectedTransactionHistories}" styleClass="elevens datatables" value="#{schoolBean.transacionHistoryModel}" var="history" id="txnHistory">
                             <f:facet name="header">Transaction History</f:facet>
+                            <p:column selectionMode="multiple" /> 
                             <p:column headerText="Name of Student">
                                 <h:outputLabel value="#{history.studentName}"/>
                             </p:column>
@@ -214,16 +235,23 @@
                             </p:column>                        
                             <p:column headerText="Date">
                                 <h:outputLabel value="#{history.date}"/>
-                            </p:column>                        
+                            </p:column>   
+                            <p:column headerText="Redeem" style="width:100%" > 
+                                <p:commandLink ajax="false" rendered="#{history.redeemed == false}" actionListener="#{schoolBean.redeemTransaction(history.id)}" style="display:#{portalAdminBean.editable}"> 
+                                    <h:graphicImage  value="/images/page_tick.gif" /> 
+                                </p:commandLink>  
+                                <h:graphicImage rendered="#{history.redeemed == true}" value="../images/icon_accept.gif" />
+                            </p:column> 
                         </p:dataTable>                    
-                        <p:poll interval="5" listener="#{schoolBean.getHistories()}" update="txnHistory" /></h:form>
-                </p:tab>      
-                <p:tab title="Audit Trail" id="audittrail">       
+                    </h:form>
                     <div style="text-align: right;padding: 5px;" class="elevens">
                         <h:form>
-                            <p:commandButton value="Log Out" styleClass="elevens bolds" action="#{portalAdminBean.logOut()}" ajax="false"/>
+                            <p:commandButton value="Export To Excel" styleClass="elevens bolds" action="#{portalAdminBean.exportToExcel()}" ajax="false">
+                                <h:graphicImage  value="../images/excel_icon.gif" /> </p:commandButton>
                         </h:form>
                     </div>
+                </p:tab>      
+                <p:tab title="Audit Trail" id="audittrail">       
                     <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
                             <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> <h:outputLabel value="From:"/>
                                 <p:calendar value="#{schoolBean.firstDate}" id="fromDate" pattern="yyyy-MM-dd" /> 
@@ -252,6 +280,7 @@
                                     <p:commandButton value="Search" styleClass="elevens bolds" action="#{schoolBean.retrieveAuditTrail()}" ajax="false"/>
                                 </h:form>
                             </div>
+
                         </h:panelGrid>
                         <br/>
                         <p:dataTable paginator="true" rows="20"  
@@ -274,7 +303,7 @@
                                 <h:outputLabel value="#{auditTrail.dateCreated}"/>
                             </p:column>                        
                         </p:dataTable>                    
-                       </h:form>
+                    </h:form>
                 </p:tab>      
             </p:tabView>
         </div>

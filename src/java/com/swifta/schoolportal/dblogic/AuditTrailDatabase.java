@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  */
 public class AuditTrailDatabase {
 
-    private Logger logger = Logger.getLogger(PortalAdminDatabase.class);
+    private Logger logger = Logger.getLogger(AuditTrailDatabase.class);
     private DateUtilities dateUtility = new DateUtilities();
     private AppValues appValues = new AppValues();
 

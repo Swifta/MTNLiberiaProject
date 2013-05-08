@@ -84,45 +84,7 @@ public class SchoolDatabase {
         return students;
     }
 
-    public List<TransactionHistory> getHistory() throws SQLException {
-        portalSession = new PortalSession();
-        TransactionHistory th = null;
-        int schoolId = 0;
-        if (portalSession.getAppSession().getAttribute("portal_admin_school_id") != null) {
-            schoolId = Integer.parseInt(String.valueOf(portalSession.getAppSession().getAttribute("portal_admin_school_id")));
-        }
-        logger.info("-----------------------new school id " + schoolId);
-        String sqlQuery = "SELECT th.last_update as 'Date', ps.name as 'Name of Student',th.amount as 'Amount Paid',"
-                + "tr.payer_id as 'Paid by',tr.payment_ref as 'Payment Reference', tr.fundamo_id as 'Transaction ID'"
-                + "from Transactions tr, Transaction_History th, Person_info ps,Partner_Service_Unit pu where tr.id ="
-                + " th.transaction_id and ps.identification_no = tr.person_id and ps.payment_serviceunit_id = pu.id"
-                + " and tr.status_code_id = '01' and pu.id = ?";
-        logger.info("history query.......>>>" + sqlQuery);
-
-        JDCConnection con = PortalDatabase.source.getConnection();
-        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
-        prepStmt.setInt(1, schoolId);
-        ResultSet res = prepStmt.executeQuery();
-        ArrayList<TransactionHistory> histories = new ArrayList<TransactionHistory>();
-
-        while (res.next()) {
-
-            th = new TransactionHistory();
-            th.setDate(res.getString(1));
-            th.setStudentName(res.getString(2));
-            //  th.setAmountPaid(String.valueOf(res.getDouble(3) / 100));
-            th.setAmountPaid(String.valueOf(res.getDouble(3)));
-            th.setPaidBy(res.getString(4));
-            th.setPaymentRef(res.getString(5));
-            th.setTransactionID(res.getString(6));
-
-            histories.add(th);
-
-        }
-        PortalDatabase.source.returnConnection(con);
-        return histories;
-
-    }
+   
 
     private int getLastID(String tableName) throws SQLException {
         String sqlQuery = "select max(id) from " + tableName;

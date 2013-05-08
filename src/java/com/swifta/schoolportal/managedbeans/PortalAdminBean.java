@@ -81,6 +81,10 @@ public class PortalAdminBean {
         this.partnerServices = partnerServices;
     }
 
+    public void exportToExcel() {
+        logger.info("export to excel");
+    }
+
     public List<PartnerService> getPartnerServices() {
         try {
             return new PartnerServiceDatabase().getAllPartnerServices();
@@ -191,6 +195,8 @@ public class PortalAdminBean {
     public void logOut() {
         try {
             portalSession.redirect(0);
+            portalSession.getAppSession().invalidate();
+
         } catch (IOException ex) {
             logger.error(ex);
         }

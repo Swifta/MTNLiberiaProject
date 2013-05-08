@@ -5,12 +5,15 @@
 package com.swifta.schoolportal.managedbeans;
 
 import com.swifta.schoolportal.datamodel.StudentDataModel;
+import com.swifta.schoolportal.datamodel.TransactionHistoryDataModel;
 import com.swifta.schoolportal.dblogic.AuditTrailDatabase;
 import com.swifta.schoolportal.dblogic.PortalAdminDatabase;
 import com.swifta.schoolportal.dblogic.SchoolDatabase;
 import com.swifta.schoolportal.dblogic.StudentDatabase;
+import com.swifta.schoolportal.dblogic.TransactionHistoryDatabase;
 import com.swifta.schoolportal.entities.*;
 import com.swifta.schoolportal.utils.AppValues;
+import com.swifta.schoolportal.utils.NumberUtilities;
 import com.swifta.schoolportal.utils.PageUrls;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -63,7 +65,8 @@ public class SchoolBean {
     private Date firstDate = new Date(), secondDate = new Date();
     private AppValues appValues = null;
     private List<String> selectedActionsPerformed = null, selectedActionTypes = null;
-    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "";
+    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "", subTotal = "";
+    private TransactionHistory[] selectedTransactionHistories;
 
     public SchoolBean() {
         admin = new SchoolAdmin();
@@ -81,6 +84,22 @@ public class SchoolBean {
         fromDate = "";
         toDate = "";
         appValues = new AppValues();
+    }
+
+    public String getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(String subTotal) {
+        this.subTotal = subTotal;
+    }
+
+    public TransactionHistory[] getSelectedTransactionHistories() {
+        return selectedTransactionHistories;
+    }
+
+    public void setSelectedTransactionHistories(TransactionHistory[] selectedTransactionHistories) {
+        this.selectedTransactionHistories = selectedTransactionHistories;
     }
 
     public List<String> getSelectedActionsPerformed() {
@@ -206,6 +225,36 @@ public class SchoolBean {
     public void retrieveSelectedSchool(String newValue) {
         portalSession.getAppSession().setAttribute("portal_admin_school_id", newValue);
         logger.info("-----------------------the portal session selected school Id is >>>>>>>>>>>>>>>>new value= " + newValue + " : old value= ");
+    }
+
+    public void redeemSelectedTransactions() {
+        logger.info("------------redeem selected" + selectedTransactionHistories);
+        int count = 0;
+        TransactionHistoryDatabase txnDatabase = new TransactionHistoryDatabase();
+        if (selectedTransactionHistories != null) {
+            for (int i = 0; i < selectedTransactionHistories.length; i++) {
+                try {
+                    txnDatabase.updateTransactionHistory(selectedTransactionHistories[i].getId());
+                    count++;
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                logger.info("-----selected id :" + i + "  " + selectedTransactionHistories[i]);
+            }
+        }
+        showMessage(count + " Transaction(s) marked as redeemed.");
+   //     
+    }
+
+    public void redeemTransaction(String transactionId) {
+        logger.info("---------------txn id====" + transactionId);
+        try {
+            new TransactionHistoryDatabase().updateTransactionHistory(Integer.valueOf(transactionId));
+            showMessage("Transaction marked as redeemed.");
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void deletePortalAdmin(String portalAdminId) {
@@ -413,9 +462,19 @@ public class SchoolBean {
         }
     }
 
+    public TransactionHistoryDataModel getTransacionHistoryModel() {
+        selectedTransactionHistories = null;
+        TransactionHistoryDataModel transacionHistoryModel = new TransactionHistoryDataModel(getHistories());
+        return transacionHistoryModel;
+    }
+
     public List<TransactionHistory> getHistories() {
+        TransactionHistoryDatabase transactionHistoryDatabase = new TransactionHistoryDatabase();
         try {
-            return new SchoolDatabase().getHistory();
+            List<TransactionHistory> transactionHistoryList = new ArrayList<TransactionHistory>();
+            transactionHistoryList = transactionHistoryDatabase.getHistory();
+            this.subTotal = "Sub Total = $ " + new NumberUtilities().format(transactionHistoryDatabase.subTotal);
+            return transactionHistoryList;
         } catch (SQLException ex) {
             logger.error(ex);
             ex.printStackTrace();
