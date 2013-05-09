@@ -256,28 +256,43 @@
                         <div style="text-align: right;padding: 5px;" class="elevens">
                             <p:commandButton value="Redeem" styleClass="elevens bolds" actionListener="#{schoolBean.redeemSelectedTransactions()}" ajax="false" style="display:#{portalAdminBean.editable}"/>
                         </div>
-                         <p:dataTable rows="20" paginator="true" selection="#{schoolBean.selectedTransactionHistories}" styleClass="elevens datatables" value="#{schoolBean.transacionHistoryDataModel}" var="history" id="txnHistory">
+                        <p:dataTable rows="20" paginator="true" selection="#{schoolBean.selectedTransactionHistories}" styleClass="elevens datatables" value="#{schoolBean.transacionHistoryDataModel}" var="history" id="txnHistory">
                             <f:facet name="header">Transaction History</f:facet>
-                            <p:column selectionMode="multiple" /> 
-                            <p:column headerText="Name of Student">
-                                <h:outputLabel value="#{history.studentName}"/>
+                            <p:column selectionMode="multiple" exportable="false" /> 
+                            <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Name of Student" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.studentName}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Amount Paid" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.amountPaid}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Paid By" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.paidBy}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Payment Reference" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.paymentRef}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Fundamo Transaction ID" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.transactionID}" />  
                             </p:column>
-                            <p:column headerText="Amount Paid">
-                                <h:outputLabel value="#{history.amountPaid}"/>
-                            </p:column>                        
-                            <p:column headerText="Paid By">
-                                <h:outputLabel value="#{history.paidBy}"/>
-                            </p:column>                        
-                            <p:column headerText="Payment Reference">
-                                <h:outputLabel value="#{history.paymentRef}"/>
-                            </p:column>                        
-                            <p:column headerText="Fundamo Transaction ID">
-                                <h:outputLabel value="#{history.transactionID}"/>
-                            </p:column>                        
-                            <p:column headerText="Date">
-                                <h:outputLabel value="#{history.date}"/>
-                            </p:column>   
-                            <p:column headerText="Redeem" > 
+                            <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Date" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.date}" />  
+                            </p:column>
+
+                            <p:column headerText="Redeem" exportable="false" > 
                                 <p:commandLink rendered="#{history.redeemed == false}" actionListener="#{schoolBean.redeemTransaction(history.id)}" ajax="false" style="display:#{portalAdminBean.editable}"> 
                                     <h:graphicImage  value="/images/page_tick.gif" /> 
                                 </p:commandLink>  
@@ -285,7 +300,7 @@
                             </p:column> 
                         </p:dataTable>                    
                     </h:form>
-                      </p:tab>      
+                </p:tab>      
                 <p:tab title="Audit Trail" id="audittrail">       
                     <h:form><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
                             <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> <h:outputLabel value="From:"/>
@@ -363,23 +378,34 @@
                             </p:panel>  
                         </h:panelGrid> 
                         <br/>
-                          <p:dataTable paginator="true" rows="20" rowsPerPageTemplate="5,10,15,50,100" styleClass="elevens datatables" value="#{schoolBean.auditTrails}" var="auditTrail" id="audittrails">
+                        <p:dataTable paginator="true" rows="20" rowsPerPageTemplate="5,10,15,50,100" styleClass="elevens datatables" value="#{schoolBean.auditTrails}" var="auditTrail" id="audittrails">
                             <f:facet name="header">Audit Trail</f:facet>
-                            <p:column headerText="Originator Name">
-                                <h:outputLabel value="#{auditTrail.originatorName}"/>
-                            </p:column>
-                            <p:column headerText="Action Performed">
-                                <h:outputLabel value="#{auditTrail.actionPerformed}"/>
-                            </p:column>                        
-                            <p:column headerText="Description">
-                                <h:outputLabel value="#{auditTrail.description}"/>
-                            </p:column>                        
-                            <p:column headerText="Originating IP Address">
-                                <h:outputLabel value="#{auditTrail.originatorIpAddress}"/>
-                            </p:column>                        
-                            <p:column headerText="Date">
-                                <h:outputLabel value="#{auditTrail.dateCreated}"/>
-                            </p:column>                        
+                            <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Originator Name" />  
+                                </f:facet>  
+                                <h:outputText value="#{auditTrail.originatorName}" />  
+                            </p:column> <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Action Performed" />  
+                                </f:facet>  
+                                <h:outputText value="#{auditTrail.actionPerformed}" />  
+                            </p:column> <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Description" />  
+                                </f:facet>  
+                                <h:outputText value="#{auditTrail.description}}" />  
+                            </p:column> <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Originating IP Address" />  
+                                </f:facet>  
+                                <h:outputText value="#{auditTrail.originatorIpAddress}" />  
+                            </p:column> <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Date" />  
+                                </f:facet>  
+                                <h:outputText value="#{auditTrail.dateCreated}" />  
+                            </p:column>           
                         </p:dataTable>                    
                     </h:form>
                 </p:tab>      

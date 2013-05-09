@@ -12,7 +12,7 @@
                     </h:inputText>
                     <h:outputLabel value="Password" styleClass="elevens whites"/>
                     <h:inputSecret value="#{portalAdminBean.portalAdmin.password}" size="30" styleClass="texts padded" validatorMessage="Validation Error: Ensure the password doesn't contain special characters, space and is between 6 to 20-character length">
-                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{5,20}" />
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{5,20}" />
                     </h:inputSecret>                    
                     <div class="centers" style="width: 60%;">
                         <h:commandButton value="Log in" styleClass="buttons elevens whites bolds padded" style="color : #fff;" action="#{portalAdminBean.authenticate()}"/>
