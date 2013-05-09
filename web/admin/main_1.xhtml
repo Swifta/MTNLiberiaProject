@@ -17,11 +17,11 @@
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
                                 <h:outputLabel value="School Name : "/>
-                                <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character lenght">
+                                <h:inputText value="#{schoolBean.school.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Name required" validatorMessage="Validation Error: Ensure the school's name doesn't contain special characters, space and is between 4 to 50-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
                                 </h:inputText>
                                 <h:outputLabel value="School Code : "/>
-                                <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character lenght">
+                                <h:inputText value="#{schoolBean.school.schoolCode}" styleClass="elevens padded" size="35" required="true" requiredMessage="School Code required" validatorMessage="Validation Error: Ensure the school registration code doesn't contain special characters, space and has  2-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,1}" />
                                 </h:inputText>
                                 <!--  <h:outputLabel value="Pick a payment mode"/>
@@ -71,11 +71,11 @@
                             <h:panelGrid styleClass="elevens" columns="2" style="width : 90%;margin: 0 auto">
 
                                 <h:outputLabel value="Admin Username : "/>
-                                <h:inputText value="#{schoolBean.portalAdmin.username}" styleClass="elevens padded" size="35" required="true" requiredMessage="Administrator Name required" validatorMessage="Validation Error: Ensure the portal admin's name doesn't contain special characters, space and is between 4 to 50-character lenght">
+                                <h:inputText value="#{schoolBean.portalAdmin.username}" styleClass="elevens padded" size="35" required="true" requiredMessage="Administrator Name required" validatorMessage="Validation Error: Ensure the portal admin's name doesn't contain special characters, space and is between 4 to 50-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
                                 </h:inputText>
                                 <h:outputLabel value="Password : "/>
-                                <h:inputText value="#{schoolBean.portalAdmin.password}" styleClass="elevens padded" size="35" required="true" requiredMessage="Admin password required" validatorMessage="Validation Error: Ensure the portal administrator's password doesn't contain special characters, space and is between 6 to 20-character lenght">
+                                <h:inputText value="#{schoolBean.portalAdmin.password}" styleClass="elevens padded" size="35" required="true" requiredMessage="Admin password required" validatorMessage="Validation Error: Ensure the portal administrator's password doesn't contain special characters, space and is between 6 to 20-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{5,20}" />
                                 </h:inputText>
                                 <h:outputLabel value="Pick a role"/>
@@ -125,15 +125,15 @@
                                     <f:selectItems value="#{portalAdminBean.schools}" var="school" itemLabel="#{school.name}" itemValue="#{school.id}"/> 
                                 </h:selectOneMenu>
                                 <h:outputLabel value="First Name : "/>
-                                <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required" validatorMessage="Validation Error: Ensure the first name doesn't contain special characters, space and is between 3 to 15-character lenght">
+                                <h:inputText value="#{schoolBean.admin.firstName}" styleClass="elevens padded" size="35" required="true" requiredMessage="First Name required" validatorMessage="Validation Error: Ensure the first name doesn't contain special characters, space and is between 3 to 15-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
                                 </h:inputText>
                                 <h:outputLabel value="Last Name : "/>
-                                <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required" validatorMessage="Validation Error: Ensure the last name doesn't contain special characters, space and is between 3 to 15-character lenght">
+                                <h:inputText value="#{schoolBean.admin.lastName}" styleClass="elevens padded" size="35" required="true" requiredMessage="Last Name required" validatorMessage="Validation Error: Ensure the last name doesn't contain special characters, space and is between 3 to 15-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}" />
                                 </h:inputText>
                                 <h:outputLabel value="Mobile : "/>
-                                <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required" validatorMessage="Validation Error: Ensure the mobile number doesn't contain special characters, space and is between 6 to 15-character lenght">
+                                <h:inputText value="#{schoolBean.admin.phoneNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Mobile required" validatorMessage="Validation Error: Ensure the mobile number doesn't contain special characters, space and is between 6 to 15-character length">
                                     <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{5,15}" />
                                 </h:inputText>
                                 <h:outputLabel value="Email Address : "/>
@@ -205,84 +205,70 @@
 
                         <div style="text-align: center;padding: 5px;" class="elevens">
 
-                            <p:commandButton value="Search" actionListener="#{schoolBean.retrieveTransacionHistoryModel()}" styleClass="elevens bolds" ajax="false"/>
+                            <p:commandButton value="Search" actionListener="#{schoolBean.populateMonths()}" styleClass="elevens bolds" ajax="false"/>
 
                         </div>
-                        <h:panelGrid columns="2" styleClass="elevens bolds">  
-                            <p:panel header="Export All Data">  
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/excel.png" />  
-                                    <p:dataExporter type="xls" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/pdf.png" />  
-                                    <p:dataExporter type="pdf" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/csv.png" />  
-                                    <p:dataExporter type="csv" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/xml.png" />  
-                                    <p:dataExporter type="xml" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-                            </p:panel>  
-
-                            <p:panel header="Export Page Data">  
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/excel.png" />  
-                                    <p:dataExporter type="xls" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/pdf.png" />  
-                                    <p:dataExporter type="pdf" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/csv.png" />  
-                                    <p:dataExporter type="csv" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/xml.png" />  
-                                    <p:dataExporter type="xml" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-                            </p:panel>  
-                        </h:panelGrid> 
                         <div style="text-align: right;padding: 5px;" class="elevens">
+
                             <p:commandButton value="Redeem" styleClass="elevens bolds" actionListener="#{schoolBean.redeemSelectedTransactions()}" ajax="false" style="display:#{portalAdminBean.editable}"/>
+                            <p:commandButton value="Export To Excel" styleClass="elevens bolds" action="#{portalAdminBean.exportToExcel()}" ajax="false">
+                                <h:graphicImage  value="../images/excel_icon.gif" /> </p:commandButton>
+
                         </div>
-                        <p:dataTable rows="20" paginator="true" selectionMode="" selection="#{schoolBean.selectedTransactionHistories}" styleClass="elevens datatables" value="#{schoolBean.transacionHistoryDataModel}" var="history" id="txnHistory">
+                        <p:dataTable rows="20" paginator="true" selection="#{schoolBean.selectedTransactionHistories}" styleClass="elevens datatables" value="#{schoolBean.months}" var="month" id="txnHistory">
                             <f:facet name="header">Transaction History</f:facet>
-                            <p:column selectionMode="multiple" /> 
-                            <p:column headerText="Name of Student">
-                                <h:outputLabel value="#{history.studentName}"/>
-                            </p:column>
-                            <p:column headerText="Amount Paid">
-                                <h:outputLabel value="#{history.amountPaid}"/>
-                            </p:column>                        
-                            <p:column headerText="Paid By">
-                                <h:outputLabel value="#{history.paidBy}"/>
-                            </p:column>                        
-                            <p:column headerText="Payment Reference">
-                                <h:outputLabel value="#{history.paymentRef}"/>
-                            </p:column>                        
-                            <p:column headerText="Fundamo Transaction ID">
-                                <h:outputLabel value="#{history.transactionID}"/>
-                            </p:column>                        
-                            <p:column headerText="Date">
-                                <h:outputLabel value="#{history.date}"/>
-                            </p:column>   
-                            <p:column headerText="Redeem" style="width:100%" exportable="false" > 
-                                <p:commandLink rendered="#{history.redeemed == false}" actionListener="#{schoolBean.redeemTransaction(history.id)}" ajax="false" style="display:#{portalAdminBean.editable}"> 
-                                    <h:graphicImage  value="/images/page_tick.gif" /> 
-                                </p:commandLink>  
-                                <h:graphicImage rendered="#{history.redeemed == true}" value="../images/icon_accept.gif" />
-                            </p:column> 
+
+                            <p:columnGroup type="header">  
+                                <p:row>  
+                                    <p:column selectionMode="multiple" /> 
+                                    <p:column  headerText="Name of Student" />  
+                                    <p:column headerText="Amount Paid" />  
+                                    <p:column  headerText="Paid By" />  
+                                    <p:column headerText="Payment Reference" />  
+                                    <p:column  headerText="Fundamo Transaction ID" />  
+                                    <p:column headerText="Date" />
+                                    <p:column headerText="Redeem" />
+                                </p:row>  
+                            </p:columnGroup>  
+
+                            <p:subTable var="history" value="#{month.transactionHistoryDataModel}">  
+                                <f:facet name="header">  
+                                    #{month.name}   
+                                </f:facet>  
+                                <p:column selectionMode="multiple" /> 
+                                <p:column>  
+                                    <h:outputLabel value="#{history.studentName}"/>
+                                </p:column>  
+
+                                <p:column>  
+                                    <h:outputLabel value="#{history.amountPaid}"/>
+                                </p:column>  
+
+                                <p:column>  
+                                    <h:outputLabel value="#{history.paidBy}"/>
+                                </p:column>  
+                                <p:column>
+                                    <h:outputLabel value="#{history.paymentRef}"/>
+                                </p:column>                        
+                                <p:column>
+                                    <h:outputLabel value="#{history.transactionID}"/>
+                                </p:column>                        
+                                <p:column headerText="Date">
+                                    <h:outputLabel value="#{history.date}"/>
+                                </p:column>   
+                                <p:column headerText="Redeem" style="width:100%" > 
+                                    <p:commandLink rendered="#{history.redeemed == false}" actionListener="#{schoolBean.redeemTransaction(history.id)}" ajax="false" style="display:#{portalAdminBean.editable}"> 
+                                        <h:graphicImage  value="/images/page_tick.gif" /> 
+                                    </p:commandLink>  
+                                    <h:graphicImage rendered="#{history.redeemed == true}" value="../images/icon_accept.gif" />
+                                </p:column> 
+                                <p:columnGroup type="footer">  
+                                    <p:row>  
+                                        <p:column colspan="2" footerText="Total: " style="text-align:right"/>  
+                                        <p:column colspan="6" footerText="#{month.monthSubtotal}" />  
+                                    </p:row>  
+                                </p:columnGroup>  
+                            </p:subTable>  
                         </p:dataTable>                    
                     </h:form>
                     <div style="text-align: right;padding: 5px;" class="elevens">
@@ -323,51 +309,6 @@
                             </div>
 
                         </h:panelGrid>
-                        <h:panelGrid columns="2" styleClass="elevens bolds">  
-                            <p:panel header="Export All Data">  
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/excel.png" />  
-                                    <p:dataExporter type="xls" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/pdf.png" />  
-                                    <p:dataExporter type="pdf" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/csv.png" />  
-                                    <p:dataExporter type="csv" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/xml.png" />  
-                                    <p:dataExporter type="xml" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" />  
-                                </h:commandLink>  
-                            </p:panel>  
-
-                            <p:panel header="Export Page Data">  
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/excel.png" />  
-                                    <p:dataExporter type="xls" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/pdf.png" />  
-                                    <p:dataExporter type="pdf" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/csv.png" />  
-                                    <p:dataExporter type="csv" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-
-                                <h:commandLink>  
-                                    <p:graphicImage value="/images/xml.png" />  
-                                    <p:dataExporter type="xml" target="audittrails" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
-                                </h:commandLink>  
-                            </p:panel>  
-                        </h:panelGrid> 
                         <br/>
                         <p:dataTable paginator="true" rows="20"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  

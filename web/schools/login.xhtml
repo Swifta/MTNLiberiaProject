@@ -7,7 +7,7 @@
             <h:form id="login">
                 <h:panelGrid columns="2" cellpadding="3" cellspacing="3">
                     <h:outputLabel value="Username" styleClass="elevens whites"/>
-                    <h:inputText value="#{loginBean.username}" size="30" styleClass="texts padded" validatorMessage="Validation Error: Ensure the username doesn't contain special characters, space and is between 3 to 20-character lenght">
+                    <h:inputText value="#{loginBean.username}" size="30" styleClass="texts padded" validatorMessage="Validation Error: Ensure the username doesn't contain special characters, space and is between 3 to 20-character length">
                         <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{3,20}" />
                     </h:inputText>
                     <div class="centers" style="width: 60%;">

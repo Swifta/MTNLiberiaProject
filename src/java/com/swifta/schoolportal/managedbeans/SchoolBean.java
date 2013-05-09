@@ -13,6 +13,7 @@ import com.swifta.schoolportal.dblogic.StudentDatabase;
 import com.swifta.schoolportal.dblogic.TransactionHistoryDatabase;
 import com.swifta.schoolportal.entities.*;
 import com.swifta.schoolportal.utils.AppValues;
+import com.swifta.schoolportal.utils.Month;
 import com.swifta.schoolportal.utils.NumberUtilities;
 import com.swifta.schoolportal.utils.PageUrls;
 import java.io.IOException;
@@ -62,11 +63,15 @@ public class SchoolBean {
     private Student student, selectedStudent;
     private StudentDataModel studentDataModel;
     private int studentId, activeIndex = 0;
-    private Date firstDate = new Date(), secondDate = new Date();
+    private Date firstDate = new Date(), secondDate = new Date(), txnFirstDate = new Date(), txnSecondDate = new Date();
     private AppValues appValues = null;
     private List<String> selectedActionsPerformed = null, selectedActionTypes = null;
-    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "", subTotal = "";
+    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "", subTotal = "", transactionHistoryFileName = "";
     private TransactionHistory[] selectedTransactionHistories;
+    private TransactionHistoryDataModel transacionHistoryDataModel = null;
+    private List<Month> months = new ArrayList<Month>();
+
+    ;
 
     public SchoolBean() {
         admin = new SchoolAdmin();
@@ -84,6 +89,71 @@ public class SchoolBean {
         fromDate = "";
         toDate = "";
         appValues = new AppValues();
+    }
+
+    public void populateMonths() {
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        months = new ArrayList<Month>();
+
+        Month month = null;
+        selectedTransactionHistories = null;
+        TransactionHistoryDatabase transactionHistoryDatabase = new TransactionHistoryDatabase();
+        for (int i = 0; i < 12; i++) {
+            month = new Month(monthNames[i], i + 1);
+            logger.info(month.getName() + "=======month name --------------from date: " + new Timestamp(txnFirstDate.getTime()) + "==========to Date : " + new Timestamp(txnSecondDate.getTime()));
+
+            logger.info("---inside try catch");
+            try {
+                month.setTransactionHistoryDataModel(new TransactionHistoryDataModel(transactionHistoryDatabase.getHistory(month.getId(), new Timestamp(txnFirstDate.getTime()).toString(), new Timestamp(txnSecondDate.getTime()).toString())));
+                logger.info("---------after try catch");
+                month.setMonthSubtotal("Sub Total = $ " + new NumberUtilities().format(transactionHistoryDatabase.subTotal));
+                transactionHistoryDatabase.subTotal = 0.0;
+            } catch (SQLException ex) {
+                logger.error(ex);
+                ex.printStackTrace();
+            }
+            months.add(month);
+        }
+    }
+
+    public String getTransactionHistoryFileName() {
+        return "TransactionHistory_" + new Timestamp(new Date().getTime()).toString();
+    }
+
+    public void setTransactionHistoryFileName(String transactionHistoryFileName) {
+        this.transactionHistoryFileName = transactionHistoryFileName;
+    }
+
+    public List<Month> getMonths() {
+        return months;
+    }
+
+    public void setMonths(List<Month> months) {
+        this.months = months;
+    }
+
+    public Date getTxnFirstDate() {
+        return txnFirstDate;
+    }
+
+    public void setTxnFirstDate(Date txnFirstDate) {
+        this.txnFirstDate = txnFirstDate;
+    }
+
+    public Date getTxnSecondDate() {
+        return txnSecondDate;
+    }
+
+    public void setTxnSecondDate(Date txnSecondDate) {
+        this.txnSecondDate = txnSecondDate;
+    }
+
+    public TransactionHistoryDataModel getTransacionHistoryDataModel() {
+        return transacionHistoryDataModel;
+    }
+
+    public void setTransacionHistoryDataModel(TransactionHistoryDataModel transacionHistoryDataModel) {
+        this.transacionHistoryDataModel = transacionHistoryDataModel;
     }
 
     public String getSubTotal() {
@@ -232,29 +302,40 @@ public class SchoolBean {
         int count = 0;
         TransactionHistoryDatabase txnDatabase = new TransactionHistoryDatabase();
         if (selectedTransactionHistories != null) {
+            PortalAdmin portalAdmin = (PortalAdmin) portalSession.getAppSession().getAttribute("logged_in_portal_admin");
+            logger.info("=====================create audit trail==================" + portalAdmin);
             for (int i = 0; i < selectedTransactionHistories.length; i++) {
                 try {
-                    txnDatabase.updateTransactionHistory(selectedTransactionHistories[i].getId());
-                    count++;
+                    if (!selectedTransactionHistories[i].isRedeemed()) {
+                        txnDatabase.updateTransactionHistory(selectedTransactionHistories[i].getId());
+
+                        createAuditTrail(appValues.AUDITTRAIL_UPDATE, appValues.AUDITTRAIL_TRANSACTIONHISTORY_ENTITY + " - Redeemed-" + selectedTransactionHistories[i].getId(), portalAdmin, null);
+                        count++;
+                    }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
-                logger.info("-----selected id :" + i + "  " + selectedTransactionHistories[i]);
             }
         }
         showMessage(count + " Transaction(s) marked as redeemed.");
-   //     
+        //    populateMonths();
+        retrieveTransacionHistoryModel();
     }
 
     public void redeemTransaction(String transactionId) {
         logger.info("---------------txn id====" + transactionId);
         try {
             new TransactionHistoryDatabase().updateTransactionHistory(Integer.valueOf(transactionId));
+            PortalAdmin portalAdmin = (PortalAdmin) portalSession.getAppSession().getAttribute("logged_in_portal_admin");
+            logger.info("=====================create audit trail==================" + portalAdmin);
+            createAuditTrail(appValues.AUDITTRAIL_UPDATE, appValues.AUDITTRAIL_TRANSACTIONHISTORY_ENTITY + " - Redeemed-" + transactionId, portalAdmin, null);
             showMessage("Transaction marked as redeemed.");
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        // populateMonths();
+        retrieveTransacionHistoryModel();
     }
 
     public void deletePortalAdmin(String portalAdminId) {
@@ -462,17 +543,39 @@ public class SchoolBean {
         }
     }
 
-    public TransactionHistoryDataModel getTransacionHistoryModel() {
+    public void retrieveTransacionHistoryModel() {
         selectedTransactionHistories = null;
-        TransactionHistoryDataModel transacionHistoryModel = new TransactionHistoryDataModel(getHistories());
-        return transacionHistoryModel;
+        logger.info("--------------from date: " + new Timestamp(txnFirstDate.getTime()) + "==========to Date : " + new Timestamp(txnSecondDate.getTime()));
+
+        logger.info("---inside try catch");
+        this.transacionHistoryDataModel = new TransactionHistoryDataModel(getHistories(new Timestamp(txnFirstDate.getTime()).toString(), new Timestamp(txnSecondDate.getTime()).toString()));
+        logger.info("---------after try catch");
     }
 
-    public List<TransactionHistory> getHistories() {
+    public void getTransacionHistoryModel() {
+        selectedTransactionHistories = null;
+        this.transacionHistoryDataModel = new TransactionHistoryDataModel(getHistories(0, "0000-00-00 00:00:00", new Timestamp(new Date().getTime()).toString()));
+    }
+
+    public List<TransactionHistory> getHistories(int monthId, String dateFrom, String dateTo) {
         TransactionHistoryDatabase transactionHistoryDatabase = new TransactionHistoryDatabase();
         try {
             List<TransactionHistory> transactionHistoryList = new ArrayList<TransactionHistory>();
-            transactionHistoryList = transactionHistoryDatabase.getHistory();
+            transactionHistoryList = transactionHistoryDatabase.getHistory(monthId, dateFrom, dateTo);
+            this.subTotal = "Sub Total = $ " + new NumberUtilities().format(transactionHistoryDatabase.subTotal);
+            return transactionHistoryList;
+        } catch (SQLException ex) {
+            logger.error(ex);
+            ex.printStackTrace();
+            return histories;
+        }
+    }
+
+    public List<TransactionHistory> getHistories(String dateFrom, String dateTo) {
+        TransactionHistoryDatabase transactionHistoryDatabase = new TransactionHistoryDatabase();
+        try {
+            List<TransactionHistory> transactionHistoryList = new ArrayList<TransactionHistory>();
+            transactionHistoryList = transactionHistoryDatabase.getHistory(dateFrom, dateTo);
             this.subTotal = "Sub Total = $ " + new NumberUtilities().format(transactionHistoryDatabase.subTotal);
             return transactionHistoryList;
         } catch (SQLException ex) {

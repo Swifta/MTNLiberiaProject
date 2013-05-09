@@ -15,7 +15,7 @@
                             <h:outputLabel value="Enter your PIN:"/>
                         </h:column>
                         <h:column>
-                            <h:inputText class="texts padded elevens" size="30" value="#{loginBean.password}" validatorMessage="Validation Error: Ensure the pin doesn't contain special characters, space, alphabets and is 4-character lenght">
+                            <h:inputText class="texts padded elevens" size="30" value="#{loginBean.password}" validatorMessage="Validation Error: Ensure the pin doesn't contain special characters, space, alphabets and is 4-character length">
                         <f:validateRegex pattern="^[^-!@~#$%/\\|][0-9]{3,3}" />
                     </h:inputText>
                         </h:column>                    
