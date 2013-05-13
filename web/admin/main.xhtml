@@ -80,7 +80,6 @@
                                 </h:inputText>
                                 <h:outputLabel value="Pick a role"/>
                                 <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.portalAdmin.roleId}">
-                                    <f:selectItem itemLabel="Select an admin role"/>
                                     <f:selectItems value="#{portalAdminBean.adminRoles}" var="adminRole" itemLabel="#{adminRole.name}" itemValue="#{adminRole.id}"/> 
                                 </h:selectOneMenu>
                                 <h:outputLabel value=""/>
@@ -157,22 +156,22 @@
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                                      rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.admins}" var="admin">
                             <f:facet name="header">List of School Administrators</f:facet>
-                            <p:column headerText="First Name" sortBy="#{admin.firstName}">
+                            <p:column headerText="First Name" sortBy="#{firstName}">
                                 <h:outputLabel value="#{admin.firstName}"/>
                             </p:column>
-                            <p:column headerText="Last Name" sortBy="#{admin.lastName}">
+                            <p:column headerText="Last Name" sortBy="#{lastName}">
                                 <h:outputLabel value="#{admin.lastName}"/>
                             </p:column>
-                            <p:column headerText="Username" sortBy="#{admin.username}">
+                            <p:column headerText="Username" sortBy="#{username}">
                                 <h:outputLabel value="#{admin.username}"/>
                             </p:column>                    
-                            <p:column headerText="Email Address" sortBy="#{admin.emailAddress}">
+                            <p:column headerText="Email Address" sortBy="#{emailAddress}">
                                 <h:outputLabel value="#{admin.emailAddress}"/>
                             </p:column>
-                            <p:column headerText="Mobile" sortBy="#{admin.phoneNo}">
+                            <p:column headerText="Mobile" sortBy="#{phoneNo}">
                                 <h:outputLabel value="#{admin.phoneNo}"/>
                             </p:column>                    
-                            <p:column headerText="Name of School" sortBy="#{admin.schoolName}">
+                            <p:column headerText="Name of School" sortBy="#{schoolName}">
                                 <h:outputLabel value="#{admin.schoolName}"/>
                             </p:column>  
                             <p:column >  

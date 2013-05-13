@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 /**
@@ -32,7 +34,7 @@ public class PortalAdminBean {
      */
     private PortalAdmin portalAdmin;
     private Logger logger = Logger.getLogger(PortalAdminBean.class);
-    private String message;
+    private String message, schoolAdminUrl, portalAdminUrl;
     private PortalSession portalSession;
     private List<School> schools;
     private PortalAdminDatabase adminDatabase = new PortalAdminDatabase();
@@ -61,6 +63,32 @@ public class PortalAdminBean {
 
     public void setPortalAdmin(PortalAdmin portalAdmin) {
         this.portalAdmin = portalAdmin;
+    }
+
+    public String getPortalAdminUrl() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String requestUri = request.getRequestURI();
+        requestUri = requestUri.substring(0, requestUri.lastIndexOf("/")).concat("/admin");
+        logger.info("--------------" + requestUri);
+
+        return requestUri;
+    }
+
+    public void setPortalAdminUrl(String portalAdminUrl) {
+        this.portalAdminUrl = portalAdminUrl;
+    }
+
+    public String getSchoolAdminUrl() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String requestUri = request.getRequestURI();
+        requestUri = requestUri.substring(0, requestUri.lastIndexOf("/admin"));
+        logger.info("--------------" + requestUri);
+
+        return requestUri;
+    }
+
+    public void setSchoolAdminUrl(String schoolAdminUrl) {
+        this.schoolAdminUrl = schoolAdminUrl;
     }
 
     public List<SchoolAdmin> getAdmins() {

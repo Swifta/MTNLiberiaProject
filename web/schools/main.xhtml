@@ -21,7 +21,7 @@
                                 <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
                             </h:inputText>
                             <h:outputLabel value="Registration Number: "/>
-                            <h:inputText value="#{schoolBean.student.identNo}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required" validatorMessage="Validation Error: Ensure the student registration number doesn't contain special characters, space and is between 2 to 10-character length">
+                            <h:inputText value="#{schoolBean.student.identNo}" styleClass="elevens padded" maxlength="10" size="35" required="true" requiredMessage="Student Registrataion Number required" validatorMessage="Validation Error: Ensure the student registration number doesn't contain special characters, space and is between 2 to 10-character length">
                                 <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,10}$" />
                             </h:inputText>
                             <h:outputLabel value=""/> 
@@ -42,14 +42,14 @@
                             <f:facet name="header">Registered Students (Select a row to update the record)</f:facet>
 
 
-                            <p:column headerText="ID No." style="width:20%">  
+                            <p:column headerText="ID No." sortBy="#{student.identNo}" style="width:20%">  
                                 <h:outputText value="#{student.identNo}" />  
                             </p:column>  
 
-                            <p:column headerText="Name of Student" style="width:50%">  
+                            <p:column headerText="Name of Student" sortBy="#{student.name}" style="width:50%">  
                                 <h:outputText value="#{student.name}" />  
                             </p:column>  
-                            <p:column headerText="Last Update" style="width:24%" >  
+                            <p:column headerText="Last Update" sortBy="#{student.lastUpdate}" style="width:24%" >  
                                 <h:outputText value="#{student.lastUpdate}" />  
                             </p:column>       
 
