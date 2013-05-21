@@ -66,7 +66,7 @@ public class SchoolBean {
     private Date firstDate = new Date(), secondDate = new Date(), txnFirstDate = new Date(), txnSecondDate = new Date();
     private AppValues appValues = null;
     private List<String> selectedActionsPerformed = null, selectedActionTypes = null;
-    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "", subTotal = "", transactionHistoryFileName = "";
+    private String currentDate = "", fromDate = "", toDate = "", selectedAction = "", selectedActor = "", subTotal = "", searchParameter = "", schoolAdminFileName="",schoolsFileName="",adminListFileName="",transactionHistoryFileName = "", registeredStudentsFileName = "";
     private TransactionHistory[] selectedTransactionHistories;
     private TransactionHistoryDataModel transacionHistoryDataModel = null;
     private List<Month> months = new ArrayList<Month>();
@@ -89,6 +89,7 @@ public class SchoolBean {
         fromDate = "";
         toDate = "";
         appValues = new AppValues();
+        searchStudents();
     }
 
     public void populateMonths() {
@@ -114,6 +115,46 @@ public class SchoolBean {
             }
             months.add(month);
         }
+    }
+
+    public String getSearchParameter() {
+        return searchParameter;
+    }
+
+    public void setSearchParameter(String searchParameter) {
+        this.searchParameter = searchParameter;
+    }
+
+    public String getSchoolAdminFileName() {
+        return "SchoolAdmin_" + new Timestamp(new Date().getTime()).toString();
+    }
+
+    public void setSchoolAdminFileName(String schoolAdminFileName) {
+        this.schoolAdminFileName = schoolAdminFileName;
+    }
+
+    public String getSchoolsFileName() {
+        return "Schools_" + new Timestamp(new Date().getTime()).toString();
+    }
+
+    public void setSchoolsFileName(String schoolsFileName) {
+        this.schoolsFileName = schoolsFileName;
+    }
+
+    public String getAdminListFileName() {
+       return "AdminList_" + new Timestamp(new Date().getTime()).toString();
+    }
+
+    public void setAdminListFileName(String adminListFileName) {
+        this.adminListFileName = adminListFileName;
+    }
+
+    public String getRegisteredStudentsFileName() {
+        return "RegisteredStudents_" + new Timestamp(new Date().getTime()).toString();
+    }
+
+    public void setRegisteredStudentsFileName(String registeredStudentsFileName) {
+        this.registeredStudentsFileName = registeredStudentsFileName;
     }
 
     public String getTransactionHistoryFileName() {
@@ -290,6 +331,24 @@ public class SchoolBean {
 
     public void setSelectedSchool(School selectedSchool) {
         this.selectedSchool = selectedSchool;
+    }
+
+
+    public void searchStudents() {
+        try {
+            List<Student> allStudents = new ArrayList<Student>();
+            String adminSchoolId = String.valueOf(portalSession.getAppSession().getAttribute("portal_admin_school_id"));
+            if (!adminSchoolId.equals("null")) {
+                allStudents = new SchoolDatabase().getAllSchoolStudents("%" + searchParameter.toLowerCase() + "%", Integer.parseInt(adminSchoolId));
+            }
+            this.students = allStudents;
+            showMessage(allStudents.size() +" student(s) retrieved");
+                    
+        } catch (SQLException ex) {
+            logger.error(ex);
+            ex.printStackTrace();
+            this.students = new ArrayList<Student>();
+        }
     }
 
     public void retrieveSelectedSchool(String newValue) {
@@ -529,18 +588,19 @@ public class SchoolBean {
     }
 
     public List<Student> getStudents() {
-        try {
-            List<Student> allStudents = new ArrayList<Student>();
-            String adminSchoolId = String.valueOf(portalSession.getAppSession().getAttribute("portal_admin_school_id"));
-            if (!adminSchoolId.equals("null")) {
-                allStudents = new SchoolDatabase().getAllSchoolStudents(Integer.parseInt(adminSchoolId));
-            }
-            return allStudents;
-        } catch (SQLException ex) {
-            logger.error(ex);
-            ex.printStackTrace();
-            return new ArrayList<Student>();
-        }
+        /*try {
+         List<Student> allStudents = new ArrayList<Student>();
+         String adminSchoolId = String.valueOf(portalSession.getAppSession().getAttribute("portal_admin_school_id"));
+         if (!adminSchoolId.equals("null")) {
+         allStudents = new SchoolDatabase().getAllSchoolStudents(Integer.parseInt(adminSchoolId));
+         }
+         return allStudents;
+         } catch (SQLException ex) {
+         logger.error(ex);
+         ex.printStackTrace();
+         return new ArrayList<Student>();
+         }*/
+        return students;
     }
 
     public void retrieveTransacionHistoryModel() {

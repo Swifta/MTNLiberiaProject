@@ -108,6 +108,7 @@ public class LoginBean {
 
                     portalSession.getAppSession().setAttribute("portal_admin_school", admin.getSchoolName());
                     portalSession.getAppSession().setAttribute("portal_admin_school_id", admin.getSchoolID());
+                    portalSession.getAppSession().setAttribute("portal_schooladmin_school_id", admin.getSchoolID());
                     portalSession.getAppSession().setAttribute("portal_admin_email", admin.getEmailAddress());
                     portalSession.getAppSession().setAttribute("portal_admin_fname", admin.getFirstName());
                     portalSession.getAppSession().setAttribute("portal_admin_lname", admin.getLastName());

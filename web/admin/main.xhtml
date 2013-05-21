@@ -46,9 +46,69 @@
                         </h:form>
                     </div>
                     <br />
-                    <h:form> <p:dataTable paginator="true" rows="20"  
-                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                          rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.schools}" var="schools">
+                    <h:form>
+                        <h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value=""/>
+                            <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> 
+                                <h:outputLabel value="Enter the school name or school code as a search parameter"/>
+                                <h:inputText value="#{portalAdminBean.searchSchoolParameter}" styleClass="elevens padded" size="35" validatorMessage="Validation Error: Ensure the search parameter doesn't contain special characters and space.">
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{0,34}$" />
+                                </h:inputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{portalAdminBean.searchSchools()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <h:panelGrid columns="2" styleClass="elevens bolds">  
+                            <p:panel header="Export All Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="schools" fileName="#{schoolBean.schoolsFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="schools" fileName="#{schoolBean.schoolsFileName}"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="schools" fileName="#{schoolBean.schoolsFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="schools" fileName="#{schoolBean.schoolsFileName}" />  
+                                </h:commandLink>  
+                            </p:panel>  
+
+                            <p:panel header="Export Page Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="schools" fileName="#{schoolBean.schoolsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="schools" fileName="#{schoolBean.schoolsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="schools" fileName="#{schoolBean.schoolsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="schools" fileName="#{schoolBean.schoolsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+                            </p:panel>  
+                        </h:panelGrid><p:dataTable paginator="true" rows="20"  
+                                                   paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                                   rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.schools}" var="schools" id="schools">
                             <f:facet name="header">List of Schools</f:facet>
                             <p:column headerText="School Name" sortBy="#{schools.name}">
                                 <h:outputLabel value="#{schools.name}"/>
@@ -94,9 +154,68 @@
                         </h:form>
                     </div>
                     <br />
-                    <h:form> <p:dataTable paginator="true" rows="20" id="adminList"
-                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                          rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.portalAdmins}" var="portalAdmins">
+                    <h:form><h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value=""/>
+                            <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> 
+                                <h:outputLabel value="Entter the username of the admin as a search parameter"/>
+                                <h:inputText value="#{portalAdminBean.searchParameter}" styleClass="elevens padded" size="35" validatorMessage="Validation Error: Ensure the search parameter doesn't contain special characters and space.">
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{0,34}$" />
+                                </h:inputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{portalAdminBean.searchPortalAdmin()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <h:panelGrid columns="2" styleClass="elevens bolds">  
+                            <p:panel header="Export All Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="adminList" fileName="#{schoolBean.adminListFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="adminList" fileName="#{schoolBean.adminListFileName}"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="adminList" fileName="#{schoolBean.adminListFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="adminList" fileName="#{schoolBean.adminListFileName}" />  
+                                </h:commandLink>  
+                            </p:panel>  
+
+                            <p:panel header="Export Page Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="adminList" fileName="#{schoolBean.adminListFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="adminList" fileName="#{schoolBean.adminListFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="adminList" fileName="#{schoolBean.adminListFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="adminList" fileName="#{schoolBean.adminListFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+                            </p:panel>  
+                        </h:panelGrid> <p:dataTable paginator="true" rows="20" id="adminList"
+                                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                                    rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.portalAdmins}" var="portalAdmins" >
                             <f:facet name="header">List of Portal Admins</f:facet>
                             <p:column headerText="Admin Username" sortBy="#{portalAdmins.username}">
                                 <h:outputLabel value="#{portalAdmins.username}"/>
@@ -151,10 +270,69 @@
                         </h:form>
                     </div>
                     <br />
-                    <h:form>
+                    <h:form><h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value=""/>
+                            <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> 
+                                <h:outputLabel value="Enter the name, email address or the mobile number of the admin as a search parameter"/>
+                                <h:inputText value="#{portalAdminBean.searchAdminParameter}" styleClass="elevens padded" size="35" validatorMessage="Validation Error: Ensure the search parameter doesn't contain special characters and space.">
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{0,34}$" />
+                                </h:inputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{portalAdminBean.searchSchoolAdmin()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <h:panelGrid columns="2" styleClass="elevens bolds">  
+                            <p:panel header="Export All Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="admin" fileName="#{schoolBean.schoolAdminFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="admin" fileName="#{schoolBean.schoolAdminFileName}"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="admin" fileName="#{schoolBean.schoolAdminFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="admin" fileName="#{schoolBean.schoolAdminFileName}" />  
+                                </h:commandLink>  
+                            </p:panel>  
+
+                            <p:panel header="Export Page Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="admin" fileName="#{schoolBean.schoolAdminFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="admin" fileName="#{schoolBean.schoolAdminFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="admin" fileName="#{schoolBean.schoolAdminFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="admin" fileName="#{schoolBean.schoolAdminFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+                            </p:panel>  
+                        </h:panelGrid>
                         <p:dataTable paginator="true" rows="20"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.admins}" var="admin">
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{portalAdminBean.admins}" var="admin" id="admin">
                             <f:facet name="header">List of School Administrators</f:facet>
                             <p:column headerText="First Name" sortBy="#{firstName}">
                                 <h:outputLabel value="#{admin.firstName}"/>

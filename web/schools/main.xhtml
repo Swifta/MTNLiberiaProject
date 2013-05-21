@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
-        <p:growl id="messages" showDetail="true" rendered="true"/>
+        <p:growl rendered="true"/>
         <div id="canvas">
             <div style="text-align: right;padding: 5px;" class="elevens">
                 <div class="centers" style="width : 75%;">
@@ -34,28 +34,91 @@
                 </p:tab>
                 <p:tab title="Registered Students" id="regstd">
 
-                    <h:form id="form">          
+                    <h:form id="form">   
+                        <h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value=""/>
+                            <h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> 
+                                <h:outputLabel value="Enter the registration number or the name of the student as a search parameter"/>
+                                <h:inputText value="#{schoolBean.searchParameter}" styleClass="elevens padded" size="35" validatorMessage="Validation Error: Ensure the search parameter doesn't contain special characters and space.">
+                                    <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{0,34}$" />
+                                </h:inputText>
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{schoolBean.searchStudents()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <h:panelGrid columns="2" styleClass="elevens bolds">  
+                            <p:panel header="Export All Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="student" fileName="#{schoolBean.registeredStudentsFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="student" fileName="#{schoolBean.registeredStudentsFileName}"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="student" fileName="#{schoolBean.registeredStudentsFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="student" fileName="#{schoolBean.registeredStudentsFileName}" />  
+                                </h:commandLink>  
+                            </p:panel>  
+
+                            <p:panel header="Export Page Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="student" fileName="#{schoolBean.registeredStudentsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="student" fileName="#{schoolBean.registeredStudentsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="student" fileName="#{schoolBean.registeredStudentsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="student" fileName="#{schoolBean.registeredStudentsFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+                            </p:panel>  
+                        </h:panelGrid>
                         <p:dataTable paginator="true" rows="100"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} 
                                      {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" styleClass="elevens datatables" 
-                                     value="#{schoolBean.students}" var="student" >
+                                     value="#{schoolBean.students}" var="student" id="student" >
                             <f:facet name="header">Registered Students (Select a row to update the record)</f:facet>
-
-
-                            <p:column headerText="ID No." sortBy="#{student.identNo}" style="width:20%">  
+                            <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="ID No." />  
+                                </f:facet>  
                                 <h:outputText value="#{student.identNo}" />  
-                            </p:column>  
-
-                            <p:column headerText="Name of Student" sortBy="#{student.name}" style="width:50%">  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Name of Student" />  
+                                </f:facet>  
                                 <h:outputText value="#{student.name}" />  
-                            </p:column>  
-                            <p:column headerText="Last Update" sortBy="#{student.lastUpdate}" style="width:24%" >  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Last Update" />  
+                                </f:facet>  
                                 <h:outputText value="#{student.lastUpdate}" />  
-                            </p:column>       
-
-                            <p:column style="width:100%" >  
+                            </p:column>                           
+                            <p:column  exportable="false" >  
                                 <p:commandLink action="#{schoolBean.retrieveStudent(student.id)}"> 
-                                   <h:graphicImage  value="/images/edit.png" /> </p:commandLink>  
+                                    <h:graphicImage  value="/images/edit.png" /> </p:commandLink>  
                             </p:column> 
 
                         </p:dataTable> 
@@ -64,29 +127,101 @@
                 </p:tab>
                 <p:tab title="Transaction History" id="tranxhist">                   
                     <h:form>
+                        <div style="text-align: center;padding: 5px;" class="elevens"> 
+                            <h:outputLabel value="#{schoolBean.subTotal}" />
+                        </div>             
+
+
+                        <h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
+                            <h:outputLabel value=""/><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto"> <h:outputLabel value="From:"/>
+                                <p:calendar value="#{schoolBean.txnFirstDate}" id="fromDate" pattern="yyyy-MM-dd" /> 
+                            </h:panelGrid><h:panelGrid styleClass="elevens bolds" columns="2" style="width : 90%;margin: 0 auto">
+                                <h:outputLabel value="To:"/>
+                                <p:calendar value="#{schoolBean.txnSecondDate}" id="toDate" pattern="yyyy-MM-dd"/> 
+                            </h:panelGrid>
+                        </h:panelGrid>
+
+                        <div style="text-align: center;padding: 5px;" class="elevens">
+
+                            <p:commandButton value="Search" actionListener="#{schoolBean.retrieveTransacionHistoryModel()}" styleClass="elevens bolds" ajax="false"/>
+
+                        </div>
+                        <h:panelGrid columns="2" styleClass="elevens bolds">  
+                            <p:panel header="Export All Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" />  
+                                </h:commandLink>  
+                            </p:panel>  
+
+                            <p:panel header="Export Page Data">  
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/excel.png" />  
+                                    <p:dataExporter type="xls" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/csv.png" />  
+                                    <p:dataExporter type="csv" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+
+                                <h:commandLink>  
+                                    <p:graphicImage value="/images/xml.png" />  
+                                    <p:dataExporter type="xml" target="txnHistory" fileName="#{schoolBean.transactionHistoryFileName}" pageOnly="true"/>  
+                                </h:commandLink>  
+                            </p:panel>  
+                        </h:panelGrid>
                         <p:dataTable paginator="true" rows="20"  
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.histories}" var="history" id="txnHistory">
+                                     rowsPerPageTemplate="5,10,15" styleClass="elevens datatables" value="#{schoolBean.transacionHistoryDataModel}" var="history" id="txnHistory">
                             <f:facet name="header">Transaction History</f:facet>
-                            <p:column headerText="Name of Student">
-                                <h:outputLabel value="#{history.studentName}"/>
-                            </p:column>
-                            <p:column headerText="Amount Paid">
-                                <h:outputLabel value="#{history.amountPaid}"/>
-                            </p:column>                        
-                            <p:column headerText="Paid By">
-                                <h:outputLabel value="#{history.paidBy}"/>
-                            </p:column>                        
-                            <p:column headerText="Payment Reference">
-                                <h:outputLabel value="#{history.paymentRef}"/>
-                            </p:column>                        
-                            <p:column headerText="Fundamo Transaction ID">
-                                <h:outputLabel value="#{history.transactionID}"/>
-                            </p:column>                        
-                            <p:column headerText="Date">
-                                <h:outputLabel value="#{history.date}"/>
-                            </p:column>                        
-                        </p:dataTable>                    <p:poll interval="5" listener="#{schoolBean.getHistories()}" update="txnHistory" /></h:form>
+                            <p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Name of Student" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.studentName}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Amount Paid" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.amountPaid}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Paid By" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.paidBy}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Payment Reference" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.paymentRef}" />  
+                            </p:column><p:column>  
+                                <f:facet name="header">  
+                                    <h:outputText value="Fundamo Transaction ID" />  
+                                </f:facet>  
+                                <h:outputText value="#{history.transactionID}" />  
+                            </p:column>                 
+                        </p:dataTable>                  </h:form>
                 </p:tab>            
             </p:tabView>            
         </div>

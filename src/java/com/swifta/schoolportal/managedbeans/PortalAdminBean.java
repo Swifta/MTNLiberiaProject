@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -34,13 +34,38 @@ public class PortalAdminBean {
      */
     private PortalAdmin portalAdmin;
     private Logger logger = Logger.getLogger(PortalAdminBean.class);
-    private String message, schoolAdminUrl, portalAdminUrl;
+    private String message, schoolAdminUrl, portalAdminUrl, searchParameter = "", searchSchoolParameter = "", searchAdminParameter = "";
     private PortalSession portalSession;
     private List<School> schools;
     private PortalAdminDatabase adminDatabase = new PortalAdminDatabase();
     private List<SchoolAdmin> admins;
+    private List<PortalAdmin> portalAdmins;
     private List<PartnerService> partnerServices;
     private List<PaymentMode> paymentModes;
+
+    public String getSearchAdminParameter() {
+        return searchAdminParameter;
+    }
+
+    public void setSearchAdminParameter(String searchAdminParameter) {
+        this.searchAdminParameter = searchAdminParameter;
+    }
+
+    public String getSearchParameter() {
+        return searchParameter;
+    }
+
+    public void setSearchParameter(String searchParameter) {
+        this.searchParameter = searchParameter;
+    }
+
+    public String getSearchSchoolParameter() {
+        return searchSchoolParameter;
+    }
+
+    public void setSearchSchoolParameter(String searchSchoolParameter) {
+        this.searchSchoolParameter = searchSchoolParameter;
+    }
 
     public String getEditable() {
         return editable;
@@ -91,14 +116,28 @@ public class PortalAdminBean {
         this.schoolAdminUrl = schoolAdminUrl;
     }
 
-    public List<SchoolAdmin> getAdmins() {
+    public void searchSchoolAdmin() {
         try {
-            return adminDatabase.getAllAdmins();
+            List<SchoolAdmin> allPortalAdmins = new ArrayList<SchoolAdmin>();
+            allPortalAdmins = adminDatabase.getAllAdmins("%" + searchAdminParameter.toLowerCase() + "%");
+            this.admins = allPortalAdmins;
+            showMessage(allPortalAdmins.size() + " school admin(s) retrieved");
         } catch (SQLException ex) {
             logger.error(ex);
-            ex.printStackTrace();
-            return admins;
+            this.admins = new ArrayList<SchoolAdmin>();
         }
+
+    }
+
+    public List<SchoolAdmin> getAdmins() {
+        /*  try {
+         return adminDatabase.getAllAdmins();
+         } catch (SQLException ex) {
+         logger.error(ex);
+         ex.printStackTrace();
+         return admins;
+         }*/
+        return admins;
     }
 
     public void setAdmins(List<SchoolAdmin> admins) {
@@ -139,13 +178,30 @@ public class PortalAdminBean {
         }
     }
 
-    public List<PortalAdmin> getPortalAdmins() {
+    public void searchPortalAdmin() {
         try {
-            return adminDatabase.getAllPortalAdmins();
+            List<PortalAdmin> allPortalAdmins = new ArrayList<PortalAdmin>();
+            allPortalAdmins = adminDatabase.getAllPortalAdmins("%" + searchParameter.toLowerCase() + "%");
+            this.portalAdmins = allPortalAdmins;
+            showMessage(allPortalAdmins.size() + " portal admin(s) retrieved");
         } catch (SQLException ex) {
             logger.error(ex);
-            return new ArrayList<PortalAdmin>();
+            this.portalAdmins = new ArrayList<PortalAdmin>();
         }
+    }
+
+    public void setPortalAdmins(List<PortalAdmin> portalAdmins) {
+        this.portalAdmins = portalAdmins;
+    }
+
+    public List<PortalAdmin> getPortalAdmins() {
+        /* try {
+         return adminDatabase.getAllPortalAdmins();
+         } catch (SQLException ex) {
+         logger.error(ex);
+         return new ArrayList<PortalAdmin>();
+         }*/
+        return portalAdmins;
     }
 
     public List<AdminRole> getAdminRoles() {
@@ -157,13 +213,28 @@ public class PortalAdminBean {
         }
     }
 
-    public List<School> getSchools() {
+    public void searchSchools() {
         try {
-            return adminDatabase.getAllSchools();
+            List<School> allSchools = new ArrayList<School>();
+            allSchools = adminDatabase.getAllSchools("%" + searchSchoolParameter.toLowerCase() + "%");
+            this.schools = allSchools;
+            showMessage(allSchools.size() + " schools(s) retrieved");
+
         } catch (SQLException ex) {
             logger.error(ex);
-            return new ArrayList<School>();
+            ex.printStackTrace();
+            this.schools = new ArrayList<School>();
         }
+    }
+
+    public List<School> getSchools() {
+        /*  try {
+         return adminDatabase.getAllSchools();
+         } catch (SQLException ex) {
+         logger.error(ex);
+         return new ArrayList<School>();
+         }*/
+        return schools;
     }
 
     public void setSchools(List<School> schools) {
@@ -228,5 +299,10 @@ public class PortalAdminBean {
         } catch (IOException ex) {
             logger.error(ex);
         }
+    }
+
+    private void showMessage(String message) {
+        FacesMessage fm = new FacesMessage(message);
+        FacesContext.getCurrentInstance().addMessage(null, fm);
     }
 }

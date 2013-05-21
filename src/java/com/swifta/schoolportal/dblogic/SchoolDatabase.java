@@ -84,7 +84,31 @@ public class SchoolDatabase {
         return students;
     }
 
-   
+    public List<Student> getAllSchoolStudents(String searchParameter, int schoolId) throws SQLException {
+
+        String sqlQuery = "select * from Person_info where payment_serviceunit_id = ? and (lower(name) like ? or lower(identification_no) like ?)";
+        logger.info(sqlQuery);
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
+        prepStmt.setInt(1, schoolId);
+        prepStmt.setString(2, searchParameter);
+        prepStmt.setString(3, searchParameter);
+        ResultSet res = prepStmt.executeQuery();
+        ArrayList<Student> students = new ArrayList<Student>();
+logger.info(prepStmt.toString());
+        while (res.next()) {
+            Student st = new Student();
+
+            st.setName(res.getString("name"));
+            st.setIdentNo(res.getString("identification_no"));
+            st.setLastUpdate(res.getString("last_update"));
+            st.setId(res.getInt("id"));
+
+            students.add(st);
+        }
+        PortalDatabase.source.returnConnection(con);
+        return students;
+    }
 
     private int getLastID(String tableName) throws SQLException {
         String sqlQuery = "select max(id) from " + tableName;

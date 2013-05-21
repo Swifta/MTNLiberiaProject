@@ -76,6 +76,36 @@ public class PortalAdminDatabase {
         return portalAdmins;
     }
 
+    public List<PortalAdmin> getAllPortalAdmins(String searchParameter) throws SQLException {
+        String query = "select * from admins where lower(username) like ?";
+
+        logger.info("Query : " + query);
+        ArrayList<PortalAdmin> portalAdmins = new ArrayList<PortalAdmin>();
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(query);
+        prepStmt.setString(1, searchParameter);
+        ResultSet res = prepStmt.executeQuery();
+        logger.info(prepStmt.toString());
+        PortalAdmin portalAdmin = null;
+        while (res.next()) {
+            logger.info("------------------------looping admins");
+
+            portalAdmin = new PortalAdmin();
+
+            portalAdmin.setDateCreated(res.getString("datecreated"));
+            portalAdmin.setUsername(res.getString("username"));
+            portalAdmin.setId(res.getInt("id"));
+            portalAdmin.setRoleName(this.getAdminRoleName(portalAdmin.getUsername()));
+            portalAdmin.setPassword(res.getString("password"));
+
+
+            portalAdmins.add(portalAdmin);
+        }
+        //con.close();
+        PortalDatabase.source.returnConnection(con);
+        return portalAdmins;
+    }
+
     public void deleteAdminRole(String portalAdminId) throws SQLException {
         String sqlQuery = "delete from admin_adminrole where admins_id = ?";
         JDCConnection connection = PortalDatabase.source.getConnection();
@@ -92,6 +122,35 @@ public class PortalAdminDatabase {
         prepStmt.setString(1, portalAdminId);
         prepStmt.execute();
         PortalDatabase.source.returnConnection(connection);
+    }
+
+    public List<School> getAllSchools(String searchParameter) throws SQLException {
+        String query = "select * from Partner_Service_Unit where lower(name) like ? or lower(school_code) like ?";
+
+//    String query = "select * from Partner_Service_Unit where has_admin = 0";
+        logger.info("Query : " + query);
+        ArrayList<School> schools = new ArrayList<School>();
+        JDCConnection con = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = con.prepareStatement(query);
+        prepStmt.setString(1, searchParameter);
+        prepStmt.setString(2, searchParameter);
+        ResultSet res = prepStmt.executeQuery();
+        logger.info(prepStmt.toString());
+        School school = null;
+        while (res.next()) {
+            school = new School();
+
+            school.setName(res.getString("name"));
+            school.setId(res.getInt("id"));
+            school.setPaymentModeType(res.getObject("payment_mode_id").toString());
+            school.setPartnerServiceName(res.getObject("partner_id").toString());
+            school.setSchoolCode(res.getString("school_code"));
+
+            schools.add(school);
+        }
+        //con.close();
+        PortalDatabase.source.returnConnection(con);
+        return schools;
     }
 
     public List<School> getAllSchools() throws SQLException {
@@ -290,6 +349,40 @@ public class PortalAdminDatabase {
         //connection.close();
         PortalDatabase.source.returnConnection(connection);
         return id;
+    }
+
+    public List<SchoolAdmin> getAllAdmins(String searchParameter) throws SQLException {
+
+        ArrayList<SchoolAdmin> admins = new ArrayList<SchoolAdmin>();
+
+        String sqlQuery = "select * from schooladmins where lower(emailaddress) like ? or lower(firstname) like ? or lower(lastname) like ? or lower(mobile) like ? or lower(username) like ?";
+        JDCConnection connection = PortalDatabase.source.getConnection();
+        PreparedStatement prepStmt = connection.prepareStatement(sqlQuery);
+        prepStmt.setString(1, searchParameter);
+        prepStmt.setString(2, searchParameter);
+        prepStmt.setString(3, searchParameter);
+        prepStmt.setString(4, searchParameter);
+        prepStmt.setString(5, searchParameter);
+        ResultSet res = prepStmt.executeQuery();
+        while (res.next()) {
+            SchoolAdmin ad = new SchoolAdmin();
+
+            ad.setEmailAddress(res.getString("emailaddress"));
+            ad.setFirstName(res.getString("firstname"));
+            ad.setLastName(res.getString("lastname"));
+            ad.setPhoneNo(res.getString("mobile"));
+            ad.setUsername(res.getString("username"));
+            School sch = this.getSchoolDetails(res.getInt("schoolid"));
+            ad.setSchoolName(sch.getName());
+            ad.setSchoolID(sch.getId());
+            ad.setId(res.getInt("id"));
+
+            admins.add(ad);
+        }
+        //connection.close();
+        logger.info(prepStmt.toString());
+        PortalDatabase.source.returnConnection(connection);
+        return admins;
     }
 
     public List<SchoolAdmin> getAllAdmins() throws SQLException {
