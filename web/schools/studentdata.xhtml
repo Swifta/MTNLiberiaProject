@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <p:growl id="messages" showDetail="true" rendered="true"/>
+        <div id="canvas">
+            
+            <h:form ><div style="align:right">
+                    <p:commandButton styleClass="elevens bolds" value="Back to student details" action="#{schoolBean.redirectToRegisterStudents()}" /> 
+                </div><p:fieldset legend="Edit Student Information" styleClass="fifteens bolds centers">  
+                    <h:outputLabel value="#{schoolBean.selectedStudent.schoolDetails}" style="margin-left:18em" styleClass="fifteens bolds"/><br/><br/>
+               <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
+                        <h:outputLabel value="Student Name : "/>
+                        <h:inputText value="#{schoolBean.selectedStudent.name}" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Name required" validatorMessage="Validation Error: Ensure the student's name doesn't contain special characters, space and is between 4 to 50-character length">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{3,50}$" />
+                    </h:inputText>
+                        <h:outputLabel value="Registration Number: "/>
+                        <h:inputText value="#{schoolBean.selectedStudent.identNo}" maxlength="12" styleClass="elevens padded" size="35" required="true" requiredMessage="Student Registrataion Number required" validatorMessage="Validation Error: Ensure the student registration number doesn't contain special characters, space and is between 2 to 10-character length">
+                        <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{1,10}" />
+                    </h:inputText>
+                        <h:outputLabel value=""/> 
+                        <h:column>
+                            <h:commandButton value="Update Student Details" styleClass="buttons elevens whites bolds padded" 
+                                             style="color : #fff;" actionListener="#{schoolBean.updateStudent()}"/> 
+                        </h:column>
+                    </h:panelGrid> 
+                </p:fieldset>
+            </h:form>  
+        </div></h:body></html>
