@@ -361,11 +361,6 @@
                 </p:tab>
                 <p:tab title="Transaction History" id="transhist"> 
                     <h:form>
-                        <div style="text-align: center;padding: 5px;" class="elevens"> 
-                            <h:outputLabel value="#{schoolBean.subTotal}" />
-                        </div>             
-
-
                         <h:panelGrid styleClass="elevens bolds" columns="7" style="width : 90%;margin: 0 auto">
                             <h:outputLabel value="Select a school and wait for transactions to reload"/>
                             <h:selectOneMenu styleClass="elevens padded" value="#{schoolBean.admin.schoolID}">
@@ -441,17 +436,23 @@
                                     <h:outputText value="Name of Student" />  
                                 </f:facet>  
                                 <h:outputText value="#{history.studentName}" />  
-                            </p:column><p:column>  
+                            </p:column>
+                            <p:column>  
                                 <f:facet name="header">  
                                     <h:outputText value="Amount Paid" />  
                                 </f:facet>  
                                 <h:outputText value="#{history.amountPaid}" />  
-                            </p:column><p:column>  
+                                <f:facet name="footer">
+                                    <h:outputText value="#{schoolBean.subTotal}"/>  
+                                </f:facet>
+                            </p:column>
+                            <p:column>  
                                 <f:facet name="header">  
                                     <h:outputText value="Paid By" />  
                                 </f:facet>  
                                 <h:outputText value="#{history.paidBy}" />  
-                            </p:column><p:column>  
+                            </p:column>
+                            <p:column>  
                                 <f:facet name="header">  
                                     <h:outputText value="Payment Reference" />  
                                 </f:facet>  

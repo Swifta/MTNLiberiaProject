@@ -110,7 +110,9 @@ public class TransactionHistoryDatabase {
             th.setId(res.getInt(8));
 
             histories.add(th);
-            this.subTotal += amount;
+            if (th.isRedeemed()) {
+                this.subTotal += amount;
+            }
 
         }
         PortalDatabase.source.returnConnection(con);
@@ -121,19 +123,17 @@ public class TransactionHistoryDatabase {
     public List<TransactionHistory> getHistory(String dateFrom, String dateTo) throws SQLException {
         portalSession = new PortalSession();
         TransactionHistory th = null;
-        dateTo = dateUtility.incrementByADay(dateTo, appValues.DEFAULT_DATE_FORMAT if (schoolId == 0 && portalSession.getAppSession().getAttribute("portal_schooladmin_school_id") != null) {
-            schoolId = Integer.parseInt(String.valueOf(portalSession.getAppSession().getAttribute("portal_schooladmin_school_id")));
+        dateTo = dateUtility.incrementByADay(dateTo, appValues.DEFAULT_DATE_FORMAT);
+        int schoolId = 0;
+        if (portalSession.getAppSession().getAttribute("portal_admin_school_id") != null) {
+            schoolId = Integer.parseInt(String.valueOf(portalSession.getAppSession().getAttribute("portal_admin_school_id")));
         }
         if (schoolId == 0 && portalSession.getAppSession().getAttribute("portal_schooladmin_school_id") != null) {
             schoolId = Integer.parseInt(String.valueOf(portalSession.getAppSession().getAttribute("portal_schooladmin_school_id")));
         }
         String sqlQuery = "SELECT th.date_created as 'Date', ps.name as 'Name of Student',th.amount as 'Amount Paid',"
                 + "tr.payer_id as 'Paid by',tr.payment_ref as 'Payment Reference', tr.fundamo_id as 'Transaction ID',"
-                + "th.redeemed as 'Redeemed',th.id as 'Id' from Transactions tr, Transaction_History th, Person_info ps,Partner_S";
-
-        JDCConnection con = PortalDatabase.source.getConnection();
-        PreparedStatement prepStmt = con.prepareStatement(sqlQuery);
-        prepStmt.seted',th.id as 'Id' from Transactions tr, Transaction_History th, Person_info ps,Partner_Service_Unit pu where tr.id ="
+                + "th.redeemed as 'Redeemed',th.id as 'Id' from Transactions tr, Transaction_History th, Person_info ps,Partner_Service_Unit pu where tr.id ="
                 + " th.transaction_id and ps.identification_no = tr.person_id and ps.payment_serviceunit_id = pu.id"
                 + " and tr.status_code_id = '01' and th.date_created <= ? and th.date_created >= ? and pu.id = ?";
 
@@ -151,4 +151,23 @@ public class TransactionHistoryDatabase {
             th = new TransactionHistory();
             th.setDate(res.getString(1));
             th.setStudentName(res.getString(2));
-            //  th.setAmountPaid(String.valueOf(res.getDouble(3) / 
+            //  th.setAmountPaid(String.valueOf(res.getDouble(3) / 100));
+            amount = res.getDouble(3);
+            th.setAmountPaid(String.valueOf(amount));
+            th.setPaidBy(res.getString(4));
+            th.setPaymentRef(res.getString(5));
+            th.setTransactionID(res.getString(6));
+            th.setRedeemed(res.getBoolean(7));
+            th.setId(res.getInt(8));
+
+            histories.add(th);
+            if (th.isRedeemed()) {
+                this.subTotal += amount;
+            }
+
+        }
+        PortalDatabase.source.returnConnection(con);
+        return histories;
+
+    }
+}

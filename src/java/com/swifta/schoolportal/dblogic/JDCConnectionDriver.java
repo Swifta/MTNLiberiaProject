@@ -4,7 +4,6 @@
  */
 package com.swifta.schoolportal.dblogic;
 
-import com.mysql.jdbc.Connection;
 import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -68,8 +67,4 @@ public class JDCConnectionDriver implements Driver {
         return false;
     }
 
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
