@@ -11,11 +11,11 @@
                     <h:panelGrid styleClass="elevens" columns="2" style="width : 80%;margin: 0 auto">
                         <h:outputLabel value="Portal Username: "/>
                         <h:inputText value="#{schoolBean.selectedPortalAdmin.username}" styleClass="elevens padded" size="35" requiredMessage="Portal Username required" validatorMessage="Validation Error: Ensure the username doesn't contain special characters, space and is between 3 to 15-character length">
-                            <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z0-9]{2,15}$" />
+                            <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{2,15}$" />
                         </h:inputText>
                         <h:outputLabel value="Password: "/>
                         <h:inputText value="#{schoolBean.selectedPortalAdmin.password}" styleClass="elevens padded" size="35" requiredMessage="Password required" validatorMessage="Validation Error: Ensure the password doesn't contain special characters, space and is between 6 to 20-character length">
-                            <f:validateRegex pattern="^[^-!@~#$%/\\|][a-zA-Z]{2,15}$" />
+                            <f:validateRegex pattern="^[^-!@~#$%/\\|][\w\s]{2,15}$" />
                         </h:inputText>
                         <h:outputLabel value="Pick a role"/>
                         <h:selectOneMenu  styleClass="elevens padded" value="#{schoolBean.selectedPortalAdmin.roleId}">
