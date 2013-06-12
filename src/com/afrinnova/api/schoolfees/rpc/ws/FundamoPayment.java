@@ -7,6 +7,7 @@ import afrinnovaelectric.Constants;
 import afrinnovaelectric.IpayMsg;
 import afrinnovaelectric.StdToken;
 import afrinnovaelectric.VendRes;
+import afrinnovaelectric.VendRevRes;
 import com.afrinnova.api.schoolfees.authentication.ServerAuthentication;
 import com.afrinnova.api.schoolfees.face.IFundamoPayment;
 import com.afrinnova.api.schoolfees.properties.AccountProperties;
@@ -69,8 +70,13 @@ public class FundamoPayment implements IFundamoPayment {
 
             logger.log(Level.INFO, "Fetching customer details for Meter number ==" + accountRef);
 
-            AccountLookup look = new AccountLookup();
-            if (!look.confirmCustomerDetails(accountRef)) {
+            AccountLookup look = AccountLookup.getInstance();
+            Boolean meterStatus = look.confirmCustomerDetails(accountRef);
+            if (meterStatus == null) {
+                logger.log(Level.INFO, "customer with meter number has a pending transaction", accountRef);
+
+                throw new ServiceException(ResponseCode.CODE_103_DUPL_TRAN_ID, "Customer with " + accountRef + " has a pending vend request and cannot complete further requests");
+            } else if (!meterStatus) {
 
                 logger.log(Level.INFO, "customer with meter number cannot be retrieved", accountRef);
 
@@ -106,12 +112,32 @@ public class FundamoPayment implements IFundamoPayment {
                                     StdToken stdToken = stdTokens.iterator().next();
                                     if (stdToken != null) {
                                         statusMessage += ":" + stdToken.getValue();
-
+                                        look.updateTransactionHistory(vendRes.getRef(), constant.TXN_COMPLETE);
                                     }
                                 }
 
                             } else {
                                 statusMessage = retrieveResponseDescription(responseCode);
+                            }
+                        } else {
+                            VendRevRes vendRevRes = ipay.getElecMsg().getVendRevRes();
+                            if (vendRevRes != null) {
+                                vendRes = vendRevRes.getVendRes();
+                                statusMessage = "Unsuccessful and reversed!!!";
+                                String responseCode = vendRevRes.getRes().getCode();
+                                if (responseCode.equalsIgnoreCase(constant.STATUS_ESKOMO)) {
+                                    statusMessage = "Reversal not supported.";
+                                    List<StdToken> stdTokens = vendRes.getStdToken();
+                                    if (stdTokens != null) {
+                                        StdToken stdToken = stdTokens.iterator().next();
+                                        if (stdToken != null) {
+                                            statusMessage += ":" + stdToken.getValue();
+                                        }
+                                    }
+
+                                } else {
+                                    statusMessage = retrieveResponseDescription(responseCode);
+                                }
                             }
                         }
                     }

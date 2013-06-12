@@ -41,10 +41,29 @@ public class AccountLookup {
     private static final Logger logger = Logger.getLogger(AccountLookup.class);
     private Constants constant = new Constants();
     private AfrinnovaElectric ae = new AfrinnovaElectric();
+    private static AccountLookup accountLookup = null;
 
     public static java.sql.Date getCurrentJavaSqlDate() {
         java.util.Date today = new java.util.Date();
         return new java.sql.Date(today.getTime());
+    }
+
+    private AccountLookup() {
+    }
+
+    public static synchronized AccountLookup getInstance() {
+
+        if (null == accountLookup) {
+            accountLookup = new AccountLookup();
+        }
+        return accountLookup;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+
+        throw new CloneNotSupportedException();
+
     }
     static Properties properties = new Properties();
 
@@ -160,7 +179,7 @@ public class AccountLookup {
         if (ipay != null) {
             if (ipay.getElecMsg() != null) {
                 if (ipay.getElecMsg().getVendRes() != null) {
-                    
+
                     logger.info("----valid response");
                 }
             }
@@ -178,14 +197,15 @@ public class AccountLookup {
                     if (ipay.getElecMsg() != null) {
                         if (ipay.getElecMsg().getVendRevRes() != null) {
                             responseStatus = false;
-
+                             updateTransactionHistory(generatedRef, constant.TXN_COMPLETE);
                         }
                     }
                 }
             }
             updateTransactionHistory(origRef, constant.TXN_REVERSED);
+           
             logger.info("------------------------after updating txn ref of reversal");
-            ipay = null;
+            //     ipay = null;
         }
         return ipay;
     }
@@ -215,10 +235,43 @@ public class AccountLookup {
 
     }
 
-    public boolean confirmCustomerDetails(String accountRef) {
+    public boolean statusOfMeter(String referenceNo) {
+        Connection c = null;
+        PreparedStatement ps = null;
+        Statement st = null;
+        boolean pendingStatus = false;
+        try {
+            c = getConnection();
+
+            logger.info("selecting pending transactions" + referenceNo);
+            ps = c.prepareStatement("select * from transaction_history where transaction_type = ? and status = ? and meter_no = ?");
+            ps.setString(1, constant.VENDREQ);
+            ps.setString(2, constant.TXN_PENDING);
+            ps.setString(3, referenceNo);
+
+         //   pendingStatus = ps.execute();
+            ResultSet res = ps.executeQuery();
+           if(res.next()){
+               pendingStatus = true;
+           }
+            logger.info("---------------SQL>>>>>>>>>>>>>>>" + ps.toString());
+            ps.close();
+
+            c.close();
+        } catch (SQLException se) {
+            logger.info("SQLException caught while retrieving record from transactions history table" + se.getMessage());
+            throw new AccountDAOException("SQLException:" + se.getMessage());
+        }
+        logger.info("<<<<<<<<<<<<<STATUS.>>>>>>>>>>>>>>>>>" + pendingStatus);
+        return pendingStatus;
+    }
+
+    public Boolean confirmCustomerDetails(String accountRef) {
         boolean detailsExist = false;
         String generatedRef = generateReferencenNumber(constant.REFNO_LENGTH);
-
+        if (statusOfMeter(accountRef)) {
+            return null;
+        }
         IpayMsg ipay = ae.generateCustomerRequestInfo(accountRef, generatedRef, this);
         if (ipay != null) {
 
@@ -235,7 +288,7 @@ public class AccountLookup {
         return detailsExist;
     }
 
-    public void insertTransactionHistory(String referenceNo, String accountRef, String paymentType, String transactionType, String status, int repCount, String origTime) throws AccountDAOException, IOException {
+    public synchronized void insertTransactionHistory(String referenceNo, String accountRef, String paymentType, String transactionType, String status, int repCount, String origTime) throws AccountDAOException, IOException {
 
         int serno;
         serno = 1;
@@ -310,7 +363,7 @@ public class AccountLookup {
 
     }
 
-    public void insertTransaction(String payerAccountIdentifier, String customerName, String accountRef, double amount, String paymentRef, String fundamoTransactionID, String thirdPartyTransactionID, String statusCode) throws AccountDAOException, IOException {
+    public synchronized void insertTransaction(String payerAccountIdentifier, String customerName, String accountRef, double amount, String paymentRef, String fundamoTransactionID, String thirdPartyTransactionID, String statusCode) throws AccountDAOException, IOException {
 
         int serno;
         serno = 1;

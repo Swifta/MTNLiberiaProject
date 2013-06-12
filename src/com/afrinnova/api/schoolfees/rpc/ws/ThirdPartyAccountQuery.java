@@ -37,7 +37,7 @@ public class ThirdPartyAccountQuery implements IThirdPartyAccountEnquiry {
 
             /* Look up account */
             logger.log(Level.INFO, "Fetching school fees amount for student with Identification number: {0}", accountRef);
-            AccountLookup look = new AccountLookup();
+            AccountLookup look = AccountLookup.getInstance();
 
         /*    Account01 thirdPartyAccount = look.getAccountref(accountRef);
 

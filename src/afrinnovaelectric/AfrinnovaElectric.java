@@ -4,6 +4,9 @@
  */
 package afrinnovaelectric;
 
+import afrinnovaelectric.util.ConnectionEntry;
+import afrinnovaelectric.util.ConnectionQueue;
+import afrinnovaelectric.util.ElectricityEngineManager;
 import com.afrinnova.api.schoolfees.service.exception.AccountDAOException;
 import com.afrinnova.api.schoolfees.service.model.AccountLookup;
 import com.afrinnova.api.schoolfees.service.model.TransactionOb;
@@ -14,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -37,12 +41,13 @@ public class AfrinnovaElectric {
     private Constants constant = new Constants();
     public boolean revRequestStatus = false;
     public boolean advResponseStatus = false;
-    public int repCount = 0, seqCount = 0;
-    private String origTime = null;
+    public int repCount = 0, seqCount = 0, timeoutRetrieved = 0;
+    private String origTime = null, responseFromServer = null, dataRetrieved = null;
     private DateUtilities du = new DateUtilities();
     private static final Logger logger = Logger.getLogger(AfrinnovaElectric.class);
     DecimalFormat decimalFormat = new DecimalFormat("00000");
-    public AfrinnovaElectric(){
+
+    public AfrinnovaElectric() {
         seqCount = 0;
     }
 
@@ -93,29 +98,61 @@ public class AfrinnovaElectric {
         return message;
     }
 
-    public String sendData(String data,int timeout) throws Exception {
-        logger.info("Connecting ... ");
-        Socket socket = new Socket("41.204.194.188", 8932);
-        socket.setKeepAlive(true);
-        socket.setSoTimeout(timeout);
-        logger.info("Opening port ... ");
-        OutputStream out = socket.getOutputStream();
-        logger.info("Writing to port ... " + out.toString());
-        out.write(wrap(data.getBytes()));
-        out.flush();
-        logger.info("Information sent ... ");
+    public String sendData(String data, String ref, int timeout) throws InterruptedException {
+        ElectricityEngineManager electricityEngineManager = ElectricityEngineManager.getInstance();;
+        // Socket socket = electricityEngineManager.getConnection(constant.IPAY_CLIENT);
+        logger.info("Connecting ... " + this.timeoutRetrieved);
+        ConnectionEntry connectionEntry = new ConnectionEntry(this);
+        this.dataRetrieved = data;
+        this.timeoutRetrieved = timeout;
+        logger.info("Connecting ... " + this.timeoutRetrieved);
+        ConnectionQueue.getInstance().queueAndRetrieveConnection(connectionEntry);
+        synchronized (this) {
+            this.wait();
+        };
+        logger.info("should have returned here.............");
+        return responseFromServer;
+    }
 
-        InputStream in = socket.getInputStream();
-        logger.info("Available : " + in.available());
-        logger.info("InputStream : " + in.toString());
-        logger.info("Reading ... ");
-        String response = new String(unWrap(in));
-        logger.info("Response ... " + response);
+    public void finalizeResponse(Socket socket) {
+        //   Socket socket = new Socket("41.204.194.188", 8932);
+        //queue connection
+        //take first connection
+        //if connection exists
+        //forward to originator
+        String response = "";
+        try {
+            socket.setKeepAlive(true);
+            socket.setSoTimeout(timeoutRetrieved);
+            OutputStream out = socket.getOutputStream();
+            out.write(wrap(dataRetrieved.getBytes()));
+            out.flush();
+            logger.info("Information sent ... ");
 
-        in.close();
-        out.close();
-        socket.close();
-        return response;
+            InputStream in = socket.getInputStream();
+            logger.info("Reading ... " + socket.toString());
+            response = new String(unWrap(in));
+            logger.info("Response ... " + response);
+
+            in.close();
+            out.close();
+            socket.close();
+            ElectricityEngineManager.getInstance().freeConnection(constant.IPAY_CLIENT, socket);
+        } catch (SocketTimeoutException ex) {
+            logger.debug(ex.getMessage());
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        logger.info("after notifying this.........." + response);
+        this.responseFromServer = response;
+        synchronized (this) {
+            this.notifyAll();
+
+        }
+
+        logger.info("after notifying this..........");
 
     }
 
@@ -123,10 +160,14 @@ public class AfrinnovaElectric {
         IpayMsg ipay = initializeDefaultIpayMsg();
         try {
             lookup.insertTransactionHistory(ref, meterNo, constant.PAYTYPE_OTHER, constant.CUSTINFOREQ, constant.TXN_COMPLETE, 0, ipay.getTime());
+
+
         } catch (AccountDAOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         Meter meter = new Meter();
         meter.setValue(meterNo);
@@ -137,12 +178,16 @@ public class AfrinnovaElectric {
 
         ipay.getElecMsg().setCustInfoReq(customerInfoReq);
         try {
-            return unMarshal(sendData(marshalRequest(ipay),constant.TIMEOUT));
+            return unMarshal(sendData(marshalRequest(ipay), ref, constant.TIMEOUT));
         } catch (JAXBException ex) {
             ex.printStackTrace();
             return null;
+
+
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
             return null;
         }
     }
@@ -155,10 +200,14 @@ public class AfrinnovaElectric {
 
             lookup.insertTransaction(transactionOb.getPayerAccountIdentifier(), transactionOb.getCustomerName(), transactionOb.getAcctref(), transactionOb.getAmount(), transactionOb.getPaymentRef(), transactionOb.getFundamoTransactionID(), ref, transactionOb.getStatuscode());
             lookup.insertTransactionHistory(ref, transactionOb.getAcctref(), constant.PAYTYPE_OTHER, constant.VENDREQ, constant.TXN_PENDING, repCount, ipay.getTime());
+
+
         } catch (AccountDAOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         Amt amt = new Amt();
@@ -180,12 +229,16 @@ public class AfrinnovaElectric {
 
         ipay.getElecMsg().setVendReq(vendReq);
         try {
-            return unMarshal(sendData(marshalRequest(ipay),constant.TIMEOUT));
+            return unMarshal(sendData(marshalRequest(ipay), ref, constant.TIMEOUT));
         } catch (JAXBException ex) {
             ex.printStackTrace();
             return null;
+
+
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
             return null;
         }
     }
@@ -194,30 +247,39 @@ public class AfrinnovaElectric {
         JAXBContext context = JAXBContext.newInstance(IpayMsg.class);
         StringWriter result = new StringWriter();
         Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        m.setProperty(Marshaller.JAXB_FRAGMENT, true);
+
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                true);
+        m.setProperty(Marshaller.JAXB_FRAGMENT,
+                true);
 
         m.marshal(object, result);
+
         System.out.println(result);
         MTNLiberiaCompressor comp = new MTNLiberiaCompressor();
+
+
         try {
 
             System.out.println("The byte arr : " + comp.wrap(result.toString().getBytes()));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
         return result.toString();
     }
 
     public IpayMsg unMarshal(String xml) {
         IpayMsg ipay = null;
+
+
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(IpayMsg.class);
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             ipay = (IpayMsg) jaxbUnmarshaller.unmarshal(new ByteArrayInputStream(xml.getBytes()));
-            System.out.println(ipay);
 
+            System.out.println(ipay);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -230,15 +292,19 @@ public class AfrinnovaElectric {
         IpayMsg ipay = initializeDefaultIpayMsg();
         try {
             lookup.insertTransactionHistory(ref, meterNo, constant.PAYTYPE_OTHER, constant.VENDADVREQ, constant.TXN_PENDING, repCount, ipay.getTime());
+
+
         } catch (AccountDAOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         VendAdvReq vendAdvReq = new VendAdvReq();
-        String currentDate = du.formatDateToString(new Date(), "yyyy-mm-dd hh:mm:ss Z");
+        String currentDate = du.formatDateToString(new Date(), "yyyy-MM-dd hh:mm:ss Z");
 
-        if (this.repCount == 0) {
+        if (this.repCount == 1) {
             this.origTime = currentDate;
         }
         //this is a test code before endpoint url
@@ -256,12 +322,16 @@ public class AfrinnovaElectric {
 
         ipay.getElecMsg().setVendAdvReq(vendAdvReq);
         try {
-            return unMarshal(sendData(marshalRequest(ipay),constant.TIMEOUT));
+            return unMarshal(sendData(marshalRequest(ipay), ref, constant.TIMEOUT));
         } catch (JAXBException ex) {
             ex.printStackTrace();
             return null;
+
+
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
             return null;
         }
     }
@@ -270,38 +340,49 @@ public class AfrinnovaElectric {
         IpayMsg ipay = initializeDefaultIpayMsg();
         try {
             lookup.insertTransactionHistory(ref, meterNo, constant.PAYTYPE_OTHER, constant.VENDREVREQ, constant.TXN_PENDING, repCount, ipay.getTime());
+
+
         } catch (AccountDAOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(AccountLookup.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AccountLookup.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         VendRevReq vendRevReq = new VendRevReq();
-        String currentDate = du.formatDateToString(new Date(), "yyyy-mm-dd hh:mm:ss Z");;
-
+        String currentDate = du.formatDateToString(new Date(), "yyyy-MM-dd hh:mm:ss Z");
+        String origTime = this.origTime;
+        Integer repCount = this.repCount;
         if (this.repCount == 0) {
+            logger.info("Orig time has been added......");
             this.origTime = currentDate;
+            repCount = null;
+            origTime = null;
         }
         //this is a test code before endpoint url
         if (this.repCount > 3) {
             revRequestStatus = false;
         }
         //ends here
-        Integer repCount = 0;
-        repCount = this.repCount == 0 ? null : this.repCount++;
+
 
         vendRevReq.setOrigRef(origRef);
         vendRevReq.setOrigTime(origTime);
         vendRevReq.setRef(ref);
         vendRevReq.setRepCount(repCount);
-
+        this.repCount++;
         ipay.getElecMsg().setVendRevReq(vendRevReq);
         try {
-            return unMarshal(sendData(marshalRequest(ipay),constant.REV_TIMEOUT));
+            return unMarshal(sendData(marshalRequest(ipay), ref, constant.REV_TIMEOUT));
         } catch (JAXBException ex) {
             ex.printStackTrace();
             return null;
+
+
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(AfrinnovaElectric.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AfrinnovaElectric.class
+                    .getName()).log(Level.SEVERE, null, ex);
+
             return null;
         }
     }
@@ -313,10 +394,10 @@ public class AfrinnovaElectric {
         elecMsg.setVer(constant.IPAY_VERSION);
         ipay.setElecMsg(elecMsg);
         ipay.setClient(constant.IPAY_CLIENT);
-        ipay.setSeqNum(decimalFormat.format(seqCount));
+        ipay.setSeqNum(SeqNumber.getInstance().nextSequence());
         seqCount++;
-        ipay.setTerm(constant.IPAY_TERM_ESKOMO);
-        ipay.setTime(du.formatDateToString(new Date(), "yyyy-mm-dd hh:mm:ss Z"));
+        ipay.setTerm(constant.IPAY_TERM);
+        ipay.setTime(du.formatDateToString(new Date(), "yyyy-MM-dd hh:mm:ss Z"));
         return ipay;
     }
 }

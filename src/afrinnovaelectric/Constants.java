@@ -12,7 +12,7 @@ public class Constants {
 
     public final String IPAY_CLIENT = "MTNLonestar";
     public final String IPAY_VERSION = "1.3";
-    public final String IPAY_DEFAULT_CURRENCY = "NGN";
+    public final String IPAY_DEFAULT_CURRENCY = "ZAR";
     public final String IPAY_PAYTYPE = "OTHER";
     public final String TXN_PENDING = "PENDING";
     public final String TXN_COMPLETE = "COMPLETE";
@@ -31,7 +31,12 @@ public class Constants {
     public final String IPAY_TERM_ESKOMO="00300";
     public final int REFNO_LENGTH = 12;
     public final int TIMEOUT = 30000;
-    public final int REV_TIMEOUT=15000;
+    public final int REV_TIMEOUT=30000;
+    
+    //SOCKET CONNECTION
+    public final int DEFAULT_PORT = 8932;
+    public final String DEFAULT_IPADDRESS = "41.204.194.188";
     
     public final String STATUS_OK = "elec000";
+     public final String STATUS_ESKOMO = "elec004";
 }

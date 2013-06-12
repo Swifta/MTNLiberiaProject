@@ -1,3 +1,5 @@
+package afrinnovaelectric.util;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,18 +20,35 @@ public class HttpClient {
 
     String url = "41.204.194.188:8932";
     String port = "";
-    String data = "<ipayMsg client=\"MTNLonestar\" term=\"1\" seqNum=\"0\" time=\"2002-05-16 10:55:30 +0200\"><elecMsg ver=\"1.3\">\n"
-            + "<custInfoReq>\n"
-            + "<ref>13610570003</ref>\n"
-            + "<meter>88123456ww789</meter>\n"
-            + "</custInfoReq>\n"
+    String datad = "<ipayMsg time=\"2013-06-06 08:46:55 +0100\" seqNum=\"00002\" term=\"00001\" client=\"MTNLonestar\">\n"
+            + "<elecMsg ver=\"1.3\">\n"
+            + "<vendReq>\n"
+            + "<ref>253197263127</ref>\n"
+            + "<amt cur=\"ZAR\">11400</amt>\n"
+            + "<numTokens>1</numTokens>\n"
+            + "<meter>90099887766</meter>\n"
+            + "<payType>OTHER</payType>\n"
+            + "</vendReq >\n"
             + "</elecMsg>\n"
             + "</ipayMsg>";
+    
+    String data = "<ipayMsg time=\"2013-06-11 09:48:04 +0100\" seqNum=\"00004\" term=\"00300\" client=\"MTNLonestar\">\n" +
+"    <elecMsg ver=\"1.3\">\n" +
+"        <vendReq>\n" +
+"            <ref>643875466090</ref>\n" +
+"            <amt cur=\"ZAR\">1000</amt>\n" +
+"            <numTokens>1</numTokens>\n" +
+"            <meter>90099887766</meter>\n" +
+"            <payType>OTHER</payType>\n" +
+"        </vendReq>\n" +
+"    </elecMsg>\n" +
+"</ipayMsg>";
 
     public void sendData() throws Exception {
         Logger.getLogger(HttpClient.class).info("Connecting ... ");
         Socket socket = new Socket("41.204.194.188", 8932);
         socket.setKeepAlive(true);
+        socket.setSoTimeout(10000);
         Logger.getLogger(HttpClient.class).info("Opening port ... ");
         OutputStream out = socket.getOutputStream();
         Logger.getLogger(HttpClient.class).info("Writing to port ... " + out.toString());
