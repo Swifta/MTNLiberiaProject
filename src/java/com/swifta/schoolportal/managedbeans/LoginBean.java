@@ -78,8 +78,8 @@ public class LoginBean {
                 String pin = new UsernameGenerator().generatePin(AppValues.pinLength);
 
                 logger.info("PIN : " + pin);
-                boolean sent = msg.sendPin(pin, new MsisdnValidator().transform(admin.getPhoneNo()));
-                //boolean sent = true;
+                //boolean sent = msg.sendPin(pin, new MsisdnValidator().transform(admin.getPhoneNo()));
+                boolean sent = true;
                 if (sent) {
                     timeSent = System.currentTimeMillis();
                     pinSent = pin;

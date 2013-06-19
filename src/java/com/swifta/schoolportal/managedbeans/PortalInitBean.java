@@ -101,6 +101,6 @@ public class PortalInitBean {
     }
 
     public static void initApp() {
-        PortalInitBean.logger.info("Initialising application ... .");
+        //PortalInitBean.logger.info("Initialising application ... .");
     }
 }
