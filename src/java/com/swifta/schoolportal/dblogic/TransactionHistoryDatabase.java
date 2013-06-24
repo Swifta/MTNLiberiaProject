@@ -110,7 +110,7 @@ public class TransactionHistoryDatabase {
             th.setId(res.getInt(8));
 
             histories.add(th);
-            if (th.isRedeemed()) {
+            if (!th.isRedeemed()) {
                 this.subTotal += amount;
             }
 
@@ -161,7 +161,7 @@ public class TransactionHistoryDatabase {
             th.setId(res.getInt(8));
 
             histories.add(th);
-            if (th.isRedeemed()) {
+            if (!th.isRedeemed()) {
                 this.subTotal += amount;
             }
 
